@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
 export default class App extends React.Component {
   handlePress = () => {
     this.props.navigation.navigate('SelectLine')
+    // this.props.navigation.navigate('Sandbox')
   }
 
   props: {
