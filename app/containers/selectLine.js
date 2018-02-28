@@ -57,7 +57,7 @@ export default class App extends React.Component {
   }
 
   handlePress = () => {
-    this.props.navigation.navigate('LineMap')
+    this.props.navigation.navigate('LineMap', { line: this.state.text })
   }
 
   render() {

@@ -7,6 +7,8 @@ import Button from 'react-native-button'
 import Colors from '../utils/colors'
 import GlobalStyles from '../utils/styles'
 
+import { createTables } from '../store/db'
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -34,6 +36,7 @@ const styles = StyleSheet.create({
 
 export default class App extends React.Component {
   handlePress = () => {
+    createTables()
     this.props.navigation.navigate('SelectLine')
     // this.props.navigation.navigate('Sandbox')
   }
