@@ -102,7 +102,8 @@ export default class App extends React.Component {
             }}
             style={styles.map}
             onMarkerPress={(e) => {
-              const s = this.state.busStops.find(stop => stop.COD_UBIC_P.toString() === e.nativeEvent.id)
+              const selectedId = e.nativeEvent.id
+              const s = this.state.busStops.find(stop => stop.COD_UBIC_P.toString() === selectedId)
               s.IS_SELECTED = !s.IS_SELECTED
               this.setState(this.state.busStops)
             }}
@@ -128,7 +129,7 @@ export default class App extends React.Component {
           styleDisabled={GlobalStyles.buttonDisabled}
           onPress={this.handlePress}
         >
-          START! {this.props.navigation.getParam('line')}
+          START!
         </Button>
       </View>
     )

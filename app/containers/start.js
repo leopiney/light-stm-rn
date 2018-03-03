@@ -7,7 +7,7 @@ import Button from 'react-native-button'
 import Colors from '../utils/colors'
 import GlobalStyles from '../utils/styles'
 
-import { createTables } from '../store/db'
+import { runMigrations } from '../store/migrations'
 
 const styles = StyleSheet.create({
   container: {
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 
 export default class App extends React.Component {
   handlePress = () => {
-    createTables()
+    runMigrations()
     this.props.navigation.navigate('SelectLine')
     // this.props.navigation.navigate('Sandbox')
   }

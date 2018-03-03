@@ -37,7 +37,7 @@ class Sandbox extends React.Component {
 
   componentDidMount() {
     db
-      .executeSql('select * from FAVORITES limit 20;', [])
+      .executeSql('select COD_UBIC_P, DESC_LINEA from FAVORITES limit 20;', [])
       .then(({ rows: { _array } }) => this.setState({ items: _array }))
       .catch(error => this.setState({ error }))
   }
@@ -48,9 +48,9 @@ class Sandbox extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Hello</Text>
-        {items.map(({ ID, COD_UBIC_P, DESC_LINEA }) => (
+        {items.map(({ COD_UBIC_P, DESC_LINEA }) => (
           <TouchableOpacity
-            key={ID}
+            key={`${COD_UBIC_P}-${DESC_LINEA}`}
             style={{
               padding: 5,
               backgroundColor: 'white',
