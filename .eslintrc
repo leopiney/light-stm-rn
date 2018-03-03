@@ -9,6 +9,7 @@
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "comma-dangle": ["warn", "only-multiline"],
-    "semi": ["warn", "never"]
+    "semi": ["warn", "never"],
+    "no-console": "off"
   }
 }
