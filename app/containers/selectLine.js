@@ -42,14 +42,16 @@ const styles = StyleSheet.create({
   }
 })
 
-export default class App extends React.Component {
-  constructor(props: { navigation: Object }) {
-    super(props)
-    this.state = { text: '' }
-  }
+type props = { navigation: Object }
 
-  state: {
-    text: string
+type state = {
+  text: string
+}
+
+export default class App extends React.Component<props, state> {
+  constructor() {
+    super()
+    this.state = { text: '' }
   }
 
   props: {

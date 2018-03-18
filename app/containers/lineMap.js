@@ -10,6 +10,22 @@ import db from '../store/db'
 import Colors from '../utils/colors'
 import GlobalStyles from '../utils/styles'
 
+type props = {
+  navigation: Object
+}
+
+type state = {
+  busStops: Array<{
+    DESC_LINEA: string,
+    COD_UBIC_P: number,
+    LAT: number,
+    LONG: number,
+    IS_SELECTED: boolean
+  }>,
+  latitude: number,
+  longitude: number
+}
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -28,22 +44,10 @@ const styles = StyleSheet.create({
   }
 })
 
-export default class App extends React.Component {
-  constructor(props: { navigation: Object }) {
-    super(props)
+export default class App extends React.Component<props, state> {
+  constructor() {
+    super()
     this.state = { busStops: [], latitude: 0, longitude: 0 }
-  }
-
-  state: {
-    busStops: Array<{
-      DESC_LINEA: string,
-      COD_UBIC_P: number,
-      LAT: number,
-      LONG: number,
-      IS_SELECTED: boolean
-    }>,
-    latitude: number,
-    longitude: number
   }
 
   componentDidMount() {
@@ -80,10 +84,6 @@ export default class App extends React.Component {
       }
     })
     this.props.navigation.navigate('Sandbox')
-  }
-
-  props: {
-    navigation: Object
   }
 
   watchID: number

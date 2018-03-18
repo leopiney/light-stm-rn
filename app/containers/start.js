@@ -34,15 +34,15 @@ const styles = StyleSheet.create({
   }
 })
 
-export default class App extends React.Component {
+type props = {
+  navigation: Object
+}
+
+export default class App extends React.Component<props> {
   handlePress = () => {
     runMigrations()
     this.props.navigation.navigate('SelectLine')
     // this.props.navigation.navigate('Sandbox')
-  }
-
-  props: {
-    navigation: Object
   }
 
   render() {

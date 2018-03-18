@@ -5,7 +5,12 @@ const dbAsset = Asset.fromModule(require('../../assets/stm.db'))
 
 const dbPath = `${FileSystem.documentDirectory}SQLite/stm.db`
 
-const conn = {}
+type connection = {
+  db?: {
+    transaction: (callback: Function, error?: Function, success?: Function) => void
+  }
+}
+const conn: connection = {}
 
 const makeSQLiteDirAsync = async () => {
   const dbTest = SQLite.openDatabase('dummy.db')
@@ -30,18 +35,33 @@ export const setUpDatabase = async () => {
   if (!exists) {
     await FileSystem.downloadAsync(dbAsset.uri, dbPath)
   }
+
   conn.db = SQLite.openDatabase('stm.db')
+  console.log('Database connection stablished')
+}
+
+type sqlResponse = {
+  insertId: number,
+  rowsAffected: number,
+  rows: {
+    length: number,
+    item: number => Object,
+    _array: Array<Object>
+  }
 }
 
 export default {
-  executeSql: (query, args) =>
-    new Promise(async (resolve, reject) => {
+  executeSql(query: string, args: Array<number | string> = []): Promise<sqlResponse> {
+    return new Promise(async (resolve, reject) => {
       if (!conn.db) {
         await setUpDatabase()
       }
 
-      console.log(`Running query on database ${query} : ${args}`)
-      return conn.db.transaction(tx =>
-        tx.executeSql(query, args || [], (_, res) => resolve(res), (_, error) => reject(error)))
+      console.log(`Running query on database ${query} : ${JSON.stringify(args)}`)
+      if (conn.db) {
+        conn.db.transaction(tx =>
+          tx.executeSql(query, args || [], (_, res) => resolve(res), (_, error) => reject(error)))
+      }
     })
+  }
 }
