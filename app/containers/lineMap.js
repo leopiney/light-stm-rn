@@ -104,8 +104,11 @@ export default class App extends React.Component<props, state> {
             onMarkerPress={(e) => {
               const selectedId = e.nativeEvent.id
               const s = this.state.busStops.find(stop => stop.COD_UBIC_P.toString() === selectedId)
-              s.IS_SELECTED = !s.IS_SELECTED
-              this.setState(this.state.busStops)
+
+              if (s) {
+                s.IS_SELECTED = !s.IS_SELECTED
+                this.setState({ busStops: this.state.busStops })
+              }
             }}
           >
             {this.state.busStops.map(stop => (
