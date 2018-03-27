@@ -45,13 +45,14 @@ const styles = StyleSheet.create({
 type props = { navigation: Object }
 
 type state = {
-  text: string
+  canContinue: boolean,
+  text: string,
 }
 
 export default class App extends React.Component<props, state> {
   constructor() {
     super()
-    this.state = { text: '' }
+    this.state = { text: '', canContinue: false }
   }
 
   props: {
@@ -73,14 +74,19 @@ export default class App extends React.Component<props, state> {
             autoCorrect={false}
             maxLength={15}
             multiline={false}
-            onChangeText={(text: string) => this.setState({ text })}
+            onChangeText={(text: string) => this.setState({ text, canContinue: text.length > 0 })}
             placeholder="For instance: 64, 111, 192, DM1"
             style={styles.input}
             underlineColorAndroid={Colors.transparent.string()}
             value={this.state.text}
           />
         </View>
-        <Button style={GlobalStyles.button} onPress={this.handlePress}>
+        <Button
+          style={GlobalStyles.button}
+          styleDisabled={GlobalStyles.buttonDisabled}
+          onPress={this.handlePress}
+          disabled={!this.state.canContinue}
+        >
           CONTINUE
         </Button>
       </View>
