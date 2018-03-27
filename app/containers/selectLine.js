@@ -73,7 +73,7 @@ export default class App extends React.Component<props, state> {
             autoCorrect={false}
             maxLength={15}
             multiline={false}
-            onChangeText={text => this.setState({ text })}
+            onChangeText={(text: string) => this.setState({ text })}
             placeholder="For instance: 64, 111, 192, DM1"
             style={styles.input}
             underlineColorAndroid={Colors.transparent.string()}

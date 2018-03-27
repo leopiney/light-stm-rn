@@ -97,12 +97,12 @@ export default class App extends React.Component<props, state> {
             initialRegion={{
               latitude: this.state.latitude,
               longitude: this.state.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
+              latitudeDelta: 0.10142,
+              longitudeDelta: 0.04631
             }}
             style={styles.map}
             onMarkerPress={(e) => {
-              const selectedId = e.nativeEvent.id
+              const selectedId: string = e.nativeEvent.id
               const s = this.state.busStops.find(stop => stop.COD_UBIC_P.toString() === selectedId)
 
               if (s) {
