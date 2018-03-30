@@ -57,7 +57,7 @@ export default class App extends React.Component<props, state> {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // Update current position of user
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -93,7 +93,7 @@ export default class App extends React.Component<props, state> {
     })
 
     // Navigate to dashboard screen
-    this.props.navigation.navigate('Sandbox')
+    this.props.navigation.navigate('Dashboard')
   }
 
   handleMarkerPress = (e: any) => {
@@ -124,12 +124,6 @@ export default class App extends React.Component<props, state> {
     const isPositionReady = this.state.latitude !== 0 && this.state.longitude !== 0
     return (
       <View style={styles.container}>
-        {!isPositionReady && (
-          <View style={styles.progress}>
-            <Progress.Circle color={Colors.accent.string()} size={60} thickness={6} indeterminate />
-          </View>
-        )}
-
         {isPositionReady && (
           <MapView
             initialRegion={{
@@ -140,11 +134,12 @@ export default class App extends React.Component<props, state> {
             }}
             style={styles.map}
             onMarkerPress={this.handleMarkerPress}
+            loadingEnabled
           >
             {this.state.busStops.map(stop => (
               <Marker
                 identifier={stop.COD_UBIC_P.toString()}
-                key={stop.COD_UBIC_P}
+                key={`${stop.COD_UBIC_P}${JSON.stringify(this.state.busStopsSelected.has(stop))}`}
                 coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
                 pinColor={
                   this.state.busStopsSelected.has(stop)
@@ -155,7 +150,11 @@ export default class App extends React.Component<props, state> {
             ))}
           </MapView>
         )}
-
+        {!isPositionReady && (
+          <View style={styles.progress}>
+            <Progress.Circle color={Colors.accent.string()} size={60} thickness={6} indeterminate />
+          </View>
+        )}
         <Button
           disabled={!isPositionReady}
           style={GlobalStyles.button}

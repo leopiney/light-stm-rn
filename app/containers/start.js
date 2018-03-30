@@ -42,7 +42,7 @@ export default class App extends React.Component<props> {
   handlePress = () => {
     runMigrations()
     this.props.navigation.navigate('SelectLine')
-    // this.props.navigation.navigate('Sandbox')
+    // this.props.navigation.navigate('Dashboard')
   }
 
   render() {

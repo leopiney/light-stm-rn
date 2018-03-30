@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   }
 })
 
-export default class Sandbox extends React.Component<props, state> {
+export default class Dashboard extends React.Component<props, state> {
   constructor() {
     super()
     this.state = { favorites: [] }
