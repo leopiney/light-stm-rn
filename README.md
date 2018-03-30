@@ -4,6 +4,17 @@ This project was bootstrapped with [Create React Native App](https://github.com/
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
 
+## Ideas
+
+* Set favorite lines/stops: Most people use 2 or 3 lines every day, they don't need to feel overwhelmed with all the other lines around them.
+* A dashboard to show all favorite stops.
+  * Show lines predictions
+  * Show buses positions if available
+* Can see detailed/fullscreen information for each stop
+  * Can delete stop-lines from this screen
+  * Track the average speed of buses? Sometimes the second bus is faster than the first one.
+  * Having enough tracking information of the buses of a certain line, predict where the buses really are based on its last reported geo-position. Eg: The system could learn to predict the real position in different days of the week, it's not the same the speed of a bus on a Sunday's afternoon than the speed of the same line at Monday 6 PM.
+
 ## STM MVD "lent" data
 
 1. Download [STM MVD APK](https://apkpure.com/stm-mvd/com.matungos.stm.mvd)
