@@ -10,18 +10,20 @@ import db from '../store/db'
 import Colors from '../utils/colors'
 import GlobalStyles from '../utils/styles'
 
+type BusStop = {
+  DESC_LINEA: string,
+  COD_UBIC_P: number,
+  LAT: number,
+  LONG: number
+}
+
 type props = {
   navigation: Object
 }
 
 type state = {
-  busStops: Array<{
-    DESC_LINEA: string,
-    COD_UBIC_P: number,
-    LAT: number,
-    LONG: number,
-    IS_SELECTED: boolean
-  }>,
+  busStops: Array<BusStop>,
+  busStopsSelected: Set<BusStop>,
   latitude: number,
   longitude: number
 }
@@ -47,10 +49,16 @@ const styles = StyleSheet.create({
 export default class App extends React.Component<props, state> {
   constructor() {
     super()
-    this.state = { busStops: [], latitude: 0, longitude: 0 }
+    this.state = {
+      busStops: [],
+      busStopsSelected: new Set(),
+      latitude: 0,
+      longitude: 0
+    }
   }
 
-  componentDidMount() {
+  componentWillMount() {
+    // Update current position of user
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords
@@ -60,6 +68,7 @@ export default class App extends React.Component<props, state> {
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
     )
 
+    // Get all bus stops for line passed through the navigator parameters
     db
       .executeSql(
         'select COD_UBIC_P, LAT, LONG, DESC_LINEA from PARADAS left join BUS_STOP on ID = COD_UBIC_P where DESC_LINEA = ?;',
@@ -73,17 +82,40 @@ export default class App extends React.Component<props, state> {
     navigator.geolocation.clearWatch(this.watchID)
   }
 
-  handlePress = () => {
-    this.state.busStops.forEach(async (stop) => {
-      if (stop.IS_SELECTED) {
-        const { rowsAffected } = await db.executeSql(
-          'insert into FAVORITES (COD_UBIC_P, DESC_LINEA) values (?, ?)',
-          [stop.COD_UBIC_P, stop.DESC_LINEA]
-        )
-        console.log(`Inserted favorite ${stop.COD_UBIC_P}/${stop.DESC_LINEA} with result ${rowsAffected}`)
-      }
+  handleButtonPress = () => {
+    // Add all selected bus stops to the favorite table
+    this.state.busStopsSelected.forEach(async (stop) => {
+      const { rowsAffected } = await db.executeSql(
+        'insert into FAVORITES (COD_UBIC_P, DESC_LINEA) values (?, ?)',
+        [stop.COD_UBIC_P, stop.DESC_LINEA]
+      )
+      console.log(`Inserted favorite ${stop.COD_UBIC_P}/${stop.DESC_LINEA} with result ${rowsAffected}`)
     })
+
+    // Navigate to dashboard screen
     this.props.navigation.navigate('Sandbox')
+  }
+
+  handleMarkerPress = (e: any) => {
+    // Find the pressed marker
+    const selectedStopId: number = parseInt(e.nativeEvent.id, 10)
+    console.log(`Touching stop with id ${selectedStopId}`)
+
+    const stop = this.state.busStops.find(s => s.COD_UBIC_P === selectedStopId)
+
+    //
+    // If the marker could be found, add it or delete it from the selected bus stops set and
+    // then update the state.
+    //
+    if (stop) {
+      if (this.state.busStopsSelected.has(stop)) {
+        this.state.busStopsSelected.delete(stop)
+      } else {
+        this.state.busStopsSelected.add(stop)
+      }
+
+      this.setState({ busStopsSelected: this.state.busStopsSelected })
+    }
   }
 
   watchID: number
@@ -92,6 +124,12 @@ export default class App extends React.Component<props, state> {
     const isPositionReady = this.state.latitude !== 0 && this.state.longitude !== 0
     return (
       <View style={styles.container}>
+        {!isPositionReady && (
+          <View style={styles.progress}>
+            <Progress.Circle color={Colors.accent.string()} size={60} thickness={6} indeterminate />
+          </View>
+        )}
+
         {isPositionReady && (
           <MapView
             initialRegion={{
@@ -101,36 +139,28 @@ export default class App extends React.Component<props, state> {
               longitudeDelta: 0.04631
             }}
             style={styles.map}
-            onMarkerPress={(e) => {
-              const selectedId: string = e.nativeEvent.id
-              const s = this.state.busStops.find(stop => stop.COD_UBIC_P.toString() === selectedId)
-
-              if (s) {
-                s.IS_SELECTED = !s.IS_SELECTED
-                this.setState({ busStops: this.state.busStops })
-              }
-            }}
+            onMarkerPress={this.handleMarkerPress}
           >
             {this.state.busStops.map(stop => (
               <Marker
                 identifier={stop.COD_UBIC_P.toString()}
                 key={stop.COD_UBIC_P}
                 coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
-                pinColor={stop.IS_SELECTED ? '#f00' : '#00f'}
+                pinColor={
+                  this.state.busStopsSelected.has(stop)
+                    ? Colors.accentDark.hex()
+                    : Colors.primaryDark.hex()
+                }
               />
             ))}
           </MapView>
         )}
-        {!isPositionReady && (
-          <View style={styles.progress}>
-            <Progress.Circle color={Colors.accent.string()} size={60} thickness={6} indeterminate />
-          </View>
-        )}
+
         <Button
           disabled={!isPositionReady}
           style={GlobalStyles.button}
           styleDisabled={GlobalStyles.buttonDisabled}
-          onPress={this.handlePress}
+          onPress={this.handleButtonPress}
         >
           START!
         </Button>

@@ -4,11 +4,6 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import db from '../store/db'
 import Colors from '../utils/colors'
 
-// const dbAsset = Expo.Asset.fromModule(require('../../assets/stm.db'))
-
-// const db = SQLite.openDatabase(dbAsset.localUri)
-// const db = SQLite.openDatabase('../../assets/stm.db')
-
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -31,24 +26,27 @@ const styles = StyleSheet.create({
 
 class Sandbox extends React.Component {
   state = {
-    items: [],
+    favorites: [],
     error: 'no error'
   }
 
   componentDidMount() {
     db
-      .executeSql('select COD_UBIC_P, DESC_LINEA from FAVORITES limit 20;', [])
-      .then(({ rows: { _array } }) => this.setState({ items: _array }))
+      .executeSql(
+        'select COD_UBIC_P, DESC_LINEA, LAT, LONG from FAVORITES join BUS_STOP on ID = COD_UBIC_P limit 20;',
+        []
+      )
+      .then(({ rows: { _array } }) => this.setState({ favorites: _array }))
       .catch(error => this.setState({ error }))
   }
 
   render() {
-    const { error, items } = this.state
+    const { error, favorites } = this.state
 
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Hello</Text>
-        {items.map(({ COD_UBIC_P, DESC_LINEA }) => (
+        {favorites.map(({ COD_UBIC_P, DESC_LINEA }) => (
           <TouchableOpacity
             key={`${COD_UBIC_P}-${DESC_LINEA}`}
             style={{
@@ -63,7 +61,7 @@ class Sandbox extends React.Component {
             </Text>
           </TouchableOpacity>
         ))}
-        <Text style={styles.welcome}>{JSON.stringify(items)}</Text>
+        <Text style={styles.welcome}>{JSON.stringify(favorites)}</Text>
         <Text style={styles.welcome}>{error}</Text>
       </View>
     )
