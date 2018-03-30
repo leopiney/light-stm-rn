@@ -75,7 +75,7 @@ export default class App extends React.Component<props, state> {
         [this.props.navigation.getParam('line')]
       )
       .then(({ rows: { _array } }) => this.setState({ busStops: _array }))
-      .catch(error => ToastAndroid.show(error.message, ToastAndroid.SHORT))
+      .catch(error => ToastAndroid.show(error.message, ToastAndroid.LONG))
   }
 
   componentWillUnmount() {

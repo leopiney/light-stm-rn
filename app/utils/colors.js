@@ -10,5 +10,6 @@ export default {
   backgroundGrey: Color('#e0e4cc'),
   black: Color('#000'),
   white: Color('#fff'),
+  whiteSmoke: Color('#f5f5f5'),
   transparent: Color('transparent')
 }

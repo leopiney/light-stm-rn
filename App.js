@@ -2,7 +2,7 @@ import React from 'react'
 import { StackNavigator } from 'react-navigation'
 
 import Start from './app/containers/start'
-import Sandbox from './app/containers/sandbox'
+import Dashboard from './app/containers/dashboard'
 import SelectLine from './app/containers/selectLine'
 import LineMap from './app/containers/lineMap'
 
@@ -12,7 +12,7 @@ setUpDatabase()
 
 const App = StackNavigator({
   Home: { screen: Start, navigationOptions: { header: null } },
-  Sandbox: { screen: Sandbox, navigationOptions: { header: null } },
+  Dashboard: { screen: Dashboard },
   SelectLine: { screen: SelectLine, navigationOptions: { header: null } },
   LineMap: { screen: LineMap, navigationOptions: { header: null } }
 })
