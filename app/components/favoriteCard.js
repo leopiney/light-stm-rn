@@ -4,19 +4,26 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 
+import LightSTM from '../api/lightSTM'
 import Colors from '../utils/colors'
 
 import LineEta from './lineETA'
 
 type FavoriteBusStop = {
-  DESC_LINEA: string,
   COD_UBIC_P: number,
   LAT: number,
   LONG: number
 }
 
+type LineVariants = {
+  line: string,
+  variantsCodes: Array<number>,
+  variantsDescriptions: Array<string>
+}
+
 type props = {
-  favorite: FavoriteBusStop
+  stop: FavoriteBusStop,
+  linesVariants: LineVariants[]
 }
 
 type state = {
@@ -65,14 +72,23 @@ export default class FavoriteCard extends React.Component<props, state> {
     }
   }
 
+  componentDidMount() {
+    const { stop, linesVariants } = this.props
+
+    LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants).then((nextETAs) => {
+      const etas = nextETAs.map(eta => ({ line: eta.line, etas: [eta.eta.toString()] }))
+      this.setState({ etas })
+    })
+  }
+
   render() {
-    const { favorite } = this.props
+    const { stop } = this.props
     return (
       <View elevation={1} style={styles.card}>
         <MapView
           initialRegion={{
-            latitude: favorite.LAT,
-            longitude: favorite.LONG,
+            latitude: stop.LAT,
+            longitude: stop.LONG,
             latitudeDelta: 0.005,
             longitudeDelta: 0.002
           }}
@@ -86,9 +102,9 @@ export default class FavoriteCard extends React.Component<props, state> {
           style={styles.map}
         >
           <Marker
-            identifier={favorite.COD_UBIC_P.toString()}
-            key={favorite.COD_UBIC_P}
-            coordinate={{ latitude: favorite.LAT, longitude: favorite.LONG }}
+            identifier={stop.COD_UBIC_P.toString()}
+            key={stop.COD_UBIC_P}
+            coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
             pinColor={Colors.accentDark.hex()}
           />
         </MapView>

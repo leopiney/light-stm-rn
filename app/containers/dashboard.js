@@ -2,22 +2,30 @@
 import React from 'react'
 import { StyleSheet, View, ScrollView, ToastAndroid } from 'react-native'
 
-import db from '../store/db'
+import LightSTM from '../api/lightSTM'
 import Colors from '../utils/colors'
 
 import FavoriteCard from '../components/favoriteCard'
 
 type FavoriteBusStop = {
-  DESC_LINEA: string,
   COD_UBIC_P: number,
   LAT: number,
   LONG: number
 }
 
+type LineVariants = {
+  line: string,
+  variantsCodes: Array<number>,
+  variantsDescriptions: Array<string>
+}
+
 type props = {}
 
 type state = {
-  favorites: Array<FavoriteBusStop>
+  favoriteStops: Array<FavoriteBusStop>,
+  favoriteStopsLines: {
+    [number]: Array<LineVariants>
+  }
 }
 
 const styles = StyleSheet.create({
@@ -35,29 +43,29 @@ const styles = StyleSheet.create({
 export default class Dashboard extends React.Component<props, state> {
   constructor() {
     super()
-    this.state = { favorites: [] }
+    this.state = { favoriteStops: [], favoriteStopsLines: {} }
   }
 
-  componentWillMount() {
-    db
-      .executeSql(
-        'select COD_UBIC_P, DESC_LINEA, LAT, LONG from FAVORITES join BUS_STOP on ID = COD_UBIC_P limit 20;',
-        []
-      )
-      .then(({ rows: { _array } }) => this.setState({ favorites: _array }))
+  componentDidMount() {
+    LightSTM.getFavorites()
+      .then(([favoriteStops, favoriteStopsLines]) => {
+        console.log(`Got favorite stops ${JSON.stringify(favoriteStops)} with lines ${JSON.stringify(favoriteStopsLines)}`)
+        this.setState({ favoriteStops, favoriteStopsLines })
+      })
       .catch(error => ToastAndroid.show(error.message, ToastAndroid.LONG))
   }
 
   render() {
-    const { favorites } = this.state
+    const { favoriteStops, favoriteStopsLines } = this.state
 
     return (
       <ScrollView>
         <View style={styles.container}>
-          {favorites.map(favorite => (
+          {favoriteStops.map(stop => (
             <FavoriteCard
-              favorite={favorite}
-              key={`${favorite.COD_UBIC_P}${favorite.DESC_LINEA}`}
+              stop={stop}
+              linesVariants={favoriteStopsLines[stop.COD_UBIC_P]}
+              key={`${stop.COD_UBIC_P}`}
             />
           ))}
         </View>

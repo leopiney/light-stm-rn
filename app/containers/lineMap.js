@@ -6,6 +6,7 @@ import MapView, { Marker } from 'react-native-maps'
 import Button from 'react-native-button'
 import * as Progress from 'react-native-progress'
 
+import LightSTM from '../api/lightSTM'
 import db from '../store/db'
 import Colors from '../utils/colors'
 import GlobalStyles from '../utils/styles'
@@ -82,15 +83,13 @@ export default class App extends React.Component<props, state> {
     navigator.geolocation.clearWatch(this.watchID)
   }
 
-  handleButtonPress = () => {
+  handleButtonPress = async () => {
     // Add all selected bus stops to the favorite table
-    this.state.busStopsSelected.forEach(async (stop) => {
-      const { rowsAffected } = await db.executeSql(
-        'insert into FAVORITES (COD_UBIC_P, DESC_LINEA) values (?, ?)',
-        [stop.COD_UBIC_P, stop.DESC_LINEA]
-      )
-      console.log(`Inserted favorite ${stop.COD_UBIC_P}/${stop.DESC_LINEA} with result ${rowsAffected}`)
-    })
+    const busStops = Array.from(this.state.busStopsSelected)
+    await Promise.all(busStops.map(async (stop) => {
+      const stopVariants = await LightSTM.getOrUpdateStopVariants(stop.COD_UBIC_P)
+      return LightSTM.addFavorite(stop.COD_UBIC_P, stop.DESC_LINEA, stopVariants)
+    }))
 
     // Navigate to dashboard screen
     this.props.navigation.navigate('Dashboard')
