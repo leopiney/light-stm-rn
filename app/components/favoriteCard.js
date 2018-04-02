@@ -1,8 +1,9 @@
 // @flow
 import React from 'react'
 
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
+import * as Progress from 'react-native-progress'
 
 import LightSTM from '../api/lightSTM'
 import Colors from '../utils/colors'
@@ -75,8 +76,12 @@ export default class FavoriteCard extends React.Component<props, state> {
 
       console.log(`Setting ETAs: ${JSON.stringify(etas)}`)
       this.setState({ buses: nextETAs, etas, loading: false })
+
+      if (nextETAs.length > 0) setTimeout(() => this.map && this.map.fitToElements(true))
     })
   }
+
+  map: ?Object
 
   render() {
     const { stop } = this.props
@@ -97,6 +102,9 @@ export default class FavoriteCard extends React.Component<props, state> {
           pitchEnabled={false}
           loadingEnabled
           style={styles.map}
+          ref={(map) => {
+            this.map = map
+          }}
         >
           <Marker
             identifier={stop.COD_UBIC_P.toString()}
@@ -106,8 +114,8 @@ export default class FavoriteCard extends React.Component<props, state> {
           />
           {this.state.buses.map(bus => (
             <Marker
-              identifier={bus.code}
-              key={bus.code}
+              identifier={bus.code.toString()}
+              key={bus.code.toString()}
               coordinate={bus.coordinates}
               pinColor={Colors.primaryDark.hex()}
             />
@@ -115,7 +123,9 @@ export default class FavoriteCard extends React.Component<props, state> {
         </MapView>
 
         <View style={styles.etasContainer}>
-          {this.state.loading && <Text>Loading...</Text>}
+          {this.state.loading && (
+            <Progress.Circle color={Colors.accent.string()} size={48} thickness={6} indeterminate />
+          )}
           {!this.state.loading &&
             this.props.linesVariants.map(lineVariants => (
               <LineEta
