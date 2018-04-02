@@ -1,12 +1,12 @@
 // @flow
 import React from 'react'
 
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Text } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 
 import LightSTM from '../api/lightSTM'
 import Colors from '../utils/colors'
-import type { FavoriteBusStop, LineVariants } from '../utils/types'
+import type { BusETA, FavoriteBusStop, LineVariants } from '../utils/types'
 
 import LineEta from './lineETA'
 
@@ -16,10 +16,11 @@ type props = {
 }
 
 type state = {
+  buses: BusETA[],
   etas: {
-    line: string,
-    etas: string[]
-  }[]
+    [string]: number[]
+  },
+  loading: boolean
 }
 
 const styles = StyleSheet.create({
@@ -53,11 +54,9 @@ export default class FavoriteCard extends React.Component<props, state> {
   constructor() {
     super()
     this.state = {
-      etas: [
-        { line: '192', etas: ['10 min', '18 min'] },
-        { line: '169', etas: ['< 1 min', '14 min'] },
-        { line: '110', etas: ['13 min'] }
-      ]
+      buses: [],
+      etas: {},
+      loading: true
     }
   }
 
@@ -65,8 +64,17 @@ export default class FavoriteCard extends React.Component<props, state> {
     const { stop, linesVariants } = this.props
 
     LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants).then((nextETAs) => {
-      const etas = nextETAs.map(eta => ({ line: eta.line, etas: [eta.eta.toString()] }))
-      this.setState({ etas })
+      const etas: { [string]: number[] } = {}
+      this.props.linesVariants.forEach((l) => {
+        etas[l.line] = []
+      })
+
+      nextETAs.forEach((nextEta) => {
+        etas[nextEta.line].push(nextEta.eta)
+      })
+
+      console.log(`Setting ETAs: ${JSON.stringify(etas)}`)
+      this.setState({ buses: nextETAs, etas, loading: false })
     })
   }
 
@@ -96,12 +104,25 @@ export default class FavoriteCard extends React.Component<props, state> {
             coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
             pinColor={Colors.accentDark.hex()}
           />
+          {this.state.buses.map(bus => (
+            <Marker
+              identifier={bus.code}
+              key={bus.code}
+              coordinate={bus.coordinates}
+              pinColor={Colors.primaryDark.hex()}
+            />
+          ))}
         </MapView>
 
         <View style={styles.etasContainer}>
-          {this.state.etas &&
-            this.state.etas.map(lineEta => (
-              <LineEta key={lineEta.line} line={lineEta.line} etas={lineEta.etas} />
+          {this.state.loading && <Text>Loading...</Text>}
+          {!this.state.loading &&
+            this.props.linesVariants.map(lineVariants => (
+              <LineEta
+                key={lineVariants.line}
+                line={lineVariants.line}
+                etas={this.state.etas[lineVariants.line]}
+              />
             ))}
         </View>
       </View>

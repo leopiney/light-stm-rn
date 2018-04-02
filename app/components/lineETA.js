@@ -31,16 +31,16 @@ const styles = StyleSheet.create({
 
 const Divider = () => <View style={styles.divider} />
 
-export default (props: { line: string, etas: Array<string> }) => (
+export default (props: { line: string, etas: number[] }) => (
   <View style={styles.container}>
     <Text style={styles.line}>{props.line}</Text>
     <Divider />
-    {props.etas &&
+    {props.etas.length > 0 &&
       props.etas.map(eta => (
         <Text key={eta} style={styles.eta}>
-          {eta}
+          {Math.floor(eta / 60)} min
         </Text>
       ))}
-    {!props.etas && <Text style={styles.eta}>No ETA yet</Text>}
+    {props.etas.length === 0 && <Text style={styles.eta}>No ETA yet</Text>}
   </View>
 )

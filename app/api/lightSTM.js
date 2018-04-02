@@ -2,7 +2,7 @@
 import db from '../store/db'
 
 import { getStopVariants, getStopNextETAs } from './mvd'
-import type { StopVariants, FavoriteBusStop, LineVariants } from '../utils/types'
+import type { BusETA, FavoriteBusStop, LineVariants, StopVariants } from '../utils/types'
 
 export default {
   addFavorite: async (stopId: number, lineDesc: string, variants: StopVariants) => {
@@ -84,7 +84,7 @@ export default {
 
     return [favoriteStops, favoriteStopsLines]
   },
-  getFavoriteNextETAs: async (stopId: number, linesVariants: LineVariants[]) => {
+  getFavoriteNextETAs: async (stopId: number, linesVariants: LineVariants[]): Promise<BusETA[]> => {
     const allVariantsCodes: number[] = linesVariants.reduce(
       (acc, s) => [...acc, ...s.variantsCodes],
       []
@@ -99,6 +99,7 @@ export default {
       console.log(`Got line variants for nextETA with variant ${v.properties.variante}: ${JSON.stringify(lineVariants)}`)
 
       return {
+        code: v.properties.codigoBus,
         coordinates: {
           latitude: v.geometry.coordinates[1],
           longitude: v.geometry.coordinates[0]

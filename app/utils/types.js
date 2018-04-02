@@ -46,3 +46,16 @@ export type NextETAs = {
   type: 'FeatureCollection',
   features: NextETA[]
 }
+
+export type BusETA = {
+  code: number,
+  coordinates: {
+    latitude: number,
+    longitude: number
+  },
+  dist: number,
+  eta: number,
+  line: string,
+  variantCode: number,
+  variantDesc: string
+}
