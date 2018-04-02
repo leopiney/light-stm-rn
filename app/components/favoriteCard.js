@@ -6,20 +6,9 @@ import MapView, { Marker } from 'react-native-maps'
 
 import LightSTM from '../api/lightSTM'
 import Colors from '../utils/colors'
+import type { FavoriteBusStop, LineVariants } from '../utils/types'
 
 import LineEta from './lineETA'
-
-type FavoriteBusStop = {
-  COD_UBIC_P: number,
-  LAT: number,
-  LONG: number
-}
-
-type LineVariants = {
-  line: string,
-  variantsCodes: Array<number>,
-  variantsDescriptions: Array<string>
-}
 
 type props = {
   stop: FavoriteBusStop,
@@ -27,10 +16,10 @@ type props = {
 }
 
 type state = {
-  etas: Array<{
+  etas: {
     line: string,
-    etas: Array<string>
-  }>
+    etas: string[]
+  }[]
 }
 
 const styles = StyleSheet.create({

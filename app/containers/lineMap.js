@@ -11,19 +11,14 @@ import db from '../store/db'
 import Colors from '../utils/colors'
 import GlobalStyles from '../utils/styles'
 
-type BusStop = {
-  DESC_LINEA: string,
-  COD_UBIC_P: number,
-  LAT: number,
-  LONG: number
-}
+import type { BusStop } from '../utils/types'
 
 type props = {
   navigation: Object
 }
 
 type state = {
-  busStops: Array<BusStop>,
+  busStops: BusStop[],
   busStopsSelected: Set<BusStop>,
   latitude: number,
   longitude: number

@@ -4,27 +4,16 @@ import { StyleSheet, View, ScrollView, ToastAndroid } from 'react-native'
 
 import LightSTM from '../api/lightSTM'
 import Colors from '../utils/colors'
+import type { FavoriteBusStop, LineVariants } from '../utils/types'
 
 import FavoriteCard from '../components/favoriteCard'
-
-type FavoriteBusStop = {
-  COD_UBIC_P: number,
-  LAT: number,
-  LONG: number
-}
-
-type LineVariants = {
-  line: string,
-  variantsCodes: Array<number>,
-  variantsDescriptions: Array<string>
-}
 
 type props = {}
 
 type state = {
-  favoriteStops: Array<FavoriteBusStop>,
+  favoriteStops: FavoriteBusStop[],
   favoriteStopsLines: {
-    [number]: Array<LineVariants>
+    [number]: LineVariants[]
   }
 }
 

@@ -2,25 +2,7 @@
 import db from '../store/db'
 
 import { getStopVariants, getStopNextETAs } from './mvd'
-
-type FavoriteBusStop = {
-  COD_UBIC_P: number,
-  LAT: number,
-  LONG: number
-}
-
-type LineVariants = {
-  line: string,
-  variantsCodes: Array<number>,
-  variantsDescriptions: Array<string>
-}
-
-type StopVariants = {
-  description: string,
-  variantsDescriptions: { [string]: string },
-  lines: { [string]: string },
-  variants: { [string]: Array<number> }
-}
+import type { StopVariants, FavoriteBusStop, LineVariants } from '../utils/types'
 
 export default {
   addFavorite: async (stopId: number, lineDesc: string, variants: StopVariants) => {

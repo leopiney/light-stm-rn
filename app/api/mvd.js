@@ -1,4 +1,6 @@
 // @flow
+import type { StopVariants, NextETA, NextETAs } from '../utils/types'
+
 const BASE_URL = 'https://m.montevideo.gub.uy'
 const USER_AGENT = 'okhttp/3.8.0'
 
@@ -27,34 +29,6 @@ type StopVariantsAPI = {
   destinos: { [string]: string },
   lineas: { [string]: string },
   variantes: { [string]: Array<number> }
-}
-
-type StopVariants = {
-  description: string,
-  variantsDescriptions: { [string]: string },
-  lines: { [string]: string },
-  variants: { [string]: Array<number> }
-}
-
-type NextETA = {
-  type: 'Feature',
-  properties: {
-    codigoBus: number,
-    codigoEmpresa: number,
-    variante: number,
-    eta: number,
-    dist: number,
-    pos: number
-  },
-  geometry: {
-    type: 'Point',
-    coordinates: [number, number]
-  }
-}
-
-type NextETAs = {
-  type: 'FeatureCollection',
-  features: NextETA[]
 }
 
 export const getStopVariants = async (stopId: number): Promise<StopVariants> => {
