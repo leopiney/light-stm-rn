@@ -128,7 +128,6 @@ export default class App extends React.Component<props, state> {
             }}
             style={styles.map}
             onMarkerPress={this.handleMarkerPress}
-            loadingEnabled
           >
             {this.state.busStops.map(stop => (
               <Marker
