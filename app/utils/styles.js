@@ -1,7 +1,7 @@
 // @flow
-import { StyleSheet } from 'react-native'
+import { StyleSheet } from "react-native";
 
-import Colors from '../utils/colors'
+import Colors from "../utils/colors";
 
 export default StyleSheet.create({
   button: {
@@ -22,4 +22,4 @@ export default StyleSheet.create({
     paddingTop: 24,
     width: 300
   }
-})
+});

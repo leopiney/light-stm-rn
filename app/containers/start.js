@@ -1,27 +1,27 @@
 // @flow
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-import Button from 'react-native-button'
+import Button from "react-native-button";
 
-import Colors from '../utils/colors'
-import GlobalStyles from '../utils/styles'
+import Colors from "../utils/colors";
+import GlobalStyles from "../utils/styles";
 
-import { runMigrations, rollbackMigrations } from '../store/migrations'
+import { runMigrations, rollbackMigrations } from "../store/migrations";
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: Colors.primary.string(),
     flex: 1,
-    justifyContent: 'space-between',
-    paddingLeft: '15%',
-    paddingRight: '15%'
+    justifyContent: "space-between",
+    paddingLeft: "15%",
+    paddingRight: "15%"
   },
   containerText: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: "center"
   },
   welcome: {
     color: Colors.white.string(),
@@ -30,21 +30,21 @@ const styles = StyleSheet.create({
   description: {
     color: Colors.white.string(),
     fontSize: 28,
-    textAlign: 'center'
+    textAlign: "center"
   }
-})
+});
 
 type props = {
   navigation: Object
-}
+};
 
 export default class App extends React.Component<props> {
   handlePress = async () => {
-    await rollbackMigrations()
-    await runMigrations()
-    this.props.navigation.navigate('SelectLine')
+    await rollbackMigrations();
+    await runMigrations();
+    this.props.navigation.navigate("SelectLine");
     // this.props.navigation.navigate('Dashboard')
-  }
+  };
 
   render() {
     return (
@@ -52,14 +52,14 @@ export default class App extends React.Component<props> {
         <View style={styles.containerText}>
           <Text style={styles.welcome}>HI!</Text>
           <Text style={styles.description}>
-            Welcome to LightSTM, the application that focuses on the bus lines you use the most for
-            commuting!
+            Welcome to LightSTM, the application that focuses on the bus lines
+            you use the most for commuting!
           </Text>
         </View>
         <Button style={GlobalStyles.button} onPress={this.handlePress}>
           GET STARTED
         </Button>
       </View>
-    )
+    );
   }
 }

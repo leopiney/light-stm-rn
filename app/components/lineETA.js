@@ -1,16 +1,16 @@
 // @flow
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-import Colors from '../utils/colors'
+import Colors from "../utils/colors";
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    position: 'relative',
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    position: "relative",
     width: 72
   },
   divider: {
@@ -27,9 +27,9 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: Colors.black.fade(0.46).string()
   }
-})
+});
 
-const Divider = () => <View style={styles.divider} />
+const Divider = () => <View style={styles.divider} />;
 
 export default (props: { line: string, etas: number[] }) => (
   <View style={styles.container}>
@@ -43,4 +43,4 @@ export default (props: { line: string, etas: number[] }) => (
       ))}
     {props.etas.length === 0 && <Text style={styles.eta}>No ETA yet</Text>}
   </View>
-)
+);

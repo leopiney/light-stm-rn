@@ -1,15 +1,37 @@
 {
-  "env": {
-    "node": true, // this is the best starting point
-    "browser": true, // for react web
-    "es6": true // enables es6 features
+  "extends": [
+    "standard",
+    "plugin:flowtype/recommended",
+    "plugin:react/recommended",
+    "prettier",
+    "prettier/flowtype",
+    "prettier/react",
+    "prettier/standard"
+  ],
+  "plugins": [
+    "flowtype",
+    "react",
+    "prettier",
+    "standard"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
-  "parser": "babel-eslint", // needed to make babel stuff work properly
-  "extends": "airbnb",
+  "globals": {
+    "fetch": true,
+    "localStorage": true,
+    "window": true
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  },
   "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "comma-dangle": ["warn", "only-multiline"],
-    "semi": ["warn", "never"],
-    "no-console": "off"
+    "prettier/prettier": "error",
+    "react/display-name": ["off"]
   }
 }

@@ -1,20 +1,20 @@
 // @flow
-import React from 'react'
+import React from "react";
 
-import { StyleSheet, View } from 'react-native'
-import MapView, { Marker } from 'react-native-maps'
-import * as Progress from 'react-native-progress'
+import { StyleSheet, View } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import * as Progress from "react-native-progress";
 
-import LightSTM from '../api/lightSTM'
-import Colors from '../utils/colors'
-import type { BusETA, FavoriteBusStop, LineVariants } from '../utils/types'
+import LightSTM from "../api/lightSTM";
+import Colors from "../utils/colors";
+import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
 
-import LineEta from './lineETA'
+import LineEta from "./lineETA";
 
 type props = {
   stop: FavoriteBusStop,
   linesVariants: LineVariants[]
-}
+};
 
 type state = {
   buses: BusETA[],
@@ -22,7 +22,7 @@ type state = {
     [string]: number[]
   },
   loading: boolean
-}
+};
 
 const styles = StyleSheet.create({
   card: {
@@ -30,61 +30,64 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     height: 304,
     margin: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
     shadowOpacity: 0.75,
     shadowRadius: 5,
-    shadowColor: 'red',
+    shadowColor: "red",
     shadowOffset: { height: 0, width: 0 },
-    width: '100%'
+    width: "100%"
   },
   etasContainer: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 104,
-    justifyContent: 'space-around',
+    justifyContent: "space-around",
     marginTop: 12
   },
   map: {
     height: 200,
-    width: '100%'
+    width: "100%"
   }
-})
+});
 
 export default class FavoriteCard extends React.Component<props, state> {
   constructor() {
-    super()
+    super();
     this.state = {
       buses: [],
       etas: {},
       loading: true
-    }
+    };
   }
 
   componentDidMount() {
-    const { stop, linesVariants } = this.props
+    const { stop, linesVariants } = this.props;
 
-    LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants).then((nextETAs) => {
-      const etas: { [string]: number[] } = {}
-      this.props.linesVariants.forEach((l) => {
-        etas[l.line] = []
-      })
+    LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants).then(
+      nextETAs => {
+        const etas: { [string]: number[] } = {};
+        this.props.linesVariants.forEach(l => {
+          etas[l.line] = [];
+        });
 
-      nextETAs.forEach((nextEta) => {
-        etas[nextEta.line].push(nextEta.eta)
-      })
+        nextETAs.forEach(nextEta => {
+          etas[nextEta.line].push(nextEta.eta);
+        });
 
-      console.log(`Setting ETAs: ${JSON.stringify(etas)}`)
-      this.setState({ buses: nextETAs, etas, loading: false })
+        console.log(`Setting ETAs: ${JSON.stringify(etas)}`);
+        this.setState({ buses: nextETAs, etas, loading: false });
 
-      if (nextETAs.length > 0) setTimeout(() => this.map && this.map.fitToElements(true))
-    })
+        if (nextETAs.length > 0)
+          setTimeout(() => this.map && this.map.fitToElements(true));
+      }
+    );
   }
 
-  map: ?Object
+  map: ?Object;
 
   render() {
-    const { stop } = this.props
+    const { stop } = this.props;
     return (
       <View elevation={1} style={styles.card}>
         <MapView
@@ -102,8 +105,8 @@ export default class FavoriteCard extends React.Component<props, state> {
           pitchEnabled={false}
           loadingEnabled
           style={styles.map}
-          ref={(map) => {
-            this.map = map
+          ref={map => {
+            this.map = map;
           }}
         >
           <Marker
@@ -124,7 +127,12 @@ export default class FavoriteCard extends React.Component<props, state> {
 
         <View style={styles.etasContainer}>
           {this.state.loading && (
-            <Progress.Circle color={Colors.accent.string()} size={48} thickness={6} indeterminate />
+            <Progress.Circle
+              color={Colors.accent.string()}
+              size={48}
+              thickness={6}
+              indeterminate
+            />
           )}
           {!this.state.loading &&
             this.props.linesVariants.map(lineVariants => (
@@ -136,6 +144,6 @@ export default class FavoriteCard extends React.Component<props, state> {
             ))}
         </View>
       </View>
-    )
+    );
   }
 }

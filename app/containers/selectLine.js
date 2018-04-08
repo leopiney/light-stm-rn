@@ -1,35 +1,35 @@
 // @flow
-import React from 'react'
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import React from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
-import Button from 'react-native-button'
+import Button from "react-native-button";
 
-import Colors from '../utils/colors'
-import GlobalStyles from '../utils/styles'
+import Colors from "../utils/colors";
+import GlobalStyles from "../utils/styles";
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: Colors.backgroundBlue.string(),
     flex: 1,
-    justifyContent: 'space-between',
-    paddingLeft: '15%',
-    paddingRight: '15%'
+    justifyContent: "space-between",
+    paddingLeft: "15%",
+    paddingRight: "15%"
   },
   containerText: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: "center"
   },
   title: {
     color: Colors.white.string(),
     fontSize: 48,
-    textAlign: 'center'
+    textAlign: "center"
   },
   subtitle: {
     color: Colors.white.string(),
     fontSize: 18,
-    textAlign: 'center'
+    textAlign: "center"
   },
   input: {
     backgroundColor: Colors.white.string(),
@@ -37,44 +37,48 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 64,
     padding: 16,
-    textAlign: 'center',
+    textAlign: "center",
     width: 300
   }
-})
+});
 
-type props = { navigation: Object }
+type props = { navigation: Object };
 
 type state = {
   canContinue: boolean,
-  text: string,
-}
+  text: string
+};
 
 export default class App extends React.Component<props, state> {
   constructor() {
-    super()
-    this.state = { text: '', canContinue: false }
+    super();
+    this.state = { text: "", canContinue: false };
   }
 
   props: {
     navigation: Object
-  }
+  };
 
   handlePress = () => {
-    this.props.navigation.navigate('LineMap', { line: this.state.text })
-  }
+    this.props.navigation.navigate("LineMap", { line: this.state.text });
+  };
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.containerText}>
           <Text style={styles.title}>Select your favorite line</Text>
-          <Text style={styles.subtitle}>(You will be able to add more later)</Text>
+          <Text style={styles.subtitle}>
+            (You will be able to add more later)
+          </Text>
           <TextInput
             autoCapitalize="none"
             autoCorrect={false}
             maxLength={15}
             multiline={false}
-            onChangeText={(text: string) => this.setState({ text, canContinue: text.length > 0 })}
+            onChangeText={(text: string) =>
+              this.setState({ text, canContinue: text.length > 0 })
+            }
             placeholder="For instance: 64, 111, 192, DM1"
             style={styles.input}
             underlineColorAndroid={Colors.transparent.string()}
@@ -90,6 +94,6 @@ export default class App extends React.Component<props, state> {
           CONTINUE
         </Button>
       </View>
-    )
+    );
   }
 }
