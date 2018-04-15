@@ -1,6 +1,12 @@
 {
   "expo": {
+    "name": "LightSTM",
+    "icon": "./icon.png",
+    "version": "0.0.1",
     "sdkVersion": "25.0.0",
+    "android": {
+      "package": "com.leopiney.lightstm"
+    },
     "packagerOpts": {
       "assetExts": ["db"]
     }
