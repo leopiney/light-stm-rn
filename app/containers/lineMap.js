@@ -10,8 +10,10 @@ import LightSTM from "../api/lightSTM";
 import db from "../store/db";
 import Colors from "../utils/colors";
 import GlobalStyles from "../utils/styles";
-import Loading from "../components/loading";
 import type { BusStop } from "../utils/types";
+
+import Loading from "../components/loading";
+import MapMarker from "../components/mapMarker";
 
 type props = {
   navigation: Object
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject
   },
-  progress: {
+  loading: {
     flex: 1,
     justifyContent: "center"
   }
@@ -142,24 +144,25 @@ export default class App extends React.Component<props, state> {
             style={styles.map}
             onMarkerPress={this.handleMarkerPress}
           >
-            {this.state.busStops.map(stop => (
+            {this.state.busStops.slice(0, 10).map(stop => (
               <Marker
                 identifier={stop.COD_UBIC_P.toString()}
                 key={`${stop.COD_UBIC_P}${JSON.stringify(
                   this.state.busStopsSelected.has(stop)
                 )}`}
                 coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
-                pinColor={
-                  this.state.busStopsSelected.has(stop)
-                    ? Colors.accentDark.hex()
-                    : Colors.primaryDark.hex()
-                }
-              />
+              >
+                <MapMarker
+                  text={stop.COD_UBIC_P}
+                  isSelected={this.state.busStopsSelected.has(stop)}
+                  isStop
+                />
+              </Marker>
             ))}
           </MapView>
         )}
         {!isPositionReady && (
-          <View style={styles.progress}>
+          <View style={styles.loading}>
             <Loading loading={!isPositionReady} size={60} />
           </View>
         )}

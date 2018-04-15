@@ -9,9 +9,10 @@ import Colors from "../utils/colors";
 import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
 
-import LineEta from "./lineETA";
 import FavoriteCardMenu from "./favoriteCardMenu";
+import LineEta from "./lineETA";
 import Loading from "./loading";
+import MapMarker from "./mapMarker";
 
 type props = {
   linesVariants: LineVariants[],
@@ -77,6 +78,10 @@ export default class FavoriteCard extends React.Component<props, state> {
     this.updateETAs();
   }
 
+  componentWillUnmount() {
+    if (this.timeout) clearTimeout(this.timeout);
+  }
+
   updateETAs = () => {
     const { stop, linesVariants } = this.props;
 
@@ -98,7 +103,7 @@ export default class FavoriteCard extends React.Component<props, state> {
           setTimeout(() => this.map && this.map.fitToElements(true));
 
         if (Settings.ETA_UPDATE_ENABLE) {
-          setTimeout(() => {
+          this.timeout = setTimeout(() => {
             this.setState({ loading: true });
             this.updateETAs();
           }, Settings.ETA_UPDATE_RATE_MS);
@@ -108,6 +113,7 @@ export default class FavoriteCard extends React.Component<props, state> {
   };
 
   map: ?Object;
+  timeout: ?any;
 
   render() {
     if (this.state.deleted) {
@@ -149,15 +155,17 @@ export default class FavoriteCard extends React.Component<props, state> {
             identifier={stop.COD_UBIC_P.toString()}
             key={stop.COD_UBIC_P}
             coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
-            pinColor={Colors.accentDark.hex()}
-          />
+          >
+            <MapMarker text={stop.COD_UBIC_P} isStop />
+          </Marker>
           {this.state.buses.map(bus => (
             <Marker
               identifier={bus.code.toString()}
               key={bus.code.toString()}
               coordinate={bus.coordinates}
-              pinColor={Colors.primaryDark.hex()}
-            />
+            >
+              <MapMarker text={bus.line} />
+            </Marker>
           ))}
         </MapView>
 

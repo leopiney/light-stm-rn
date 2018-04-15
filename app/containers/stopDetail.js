@@ -10,6 +10,7 @@ import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
 
 import Loading from "../components/loading";
+import MapMarker from "../components/mapMarker";
 
 type props = {
   navigation: Object
@@ -82,7 +83,7 @@ export default class App extends React.Component<props, state> {
 
   triggerETAs = () => {
     if (Settings.ETA_UPDATE_ENABLE) {
-      setTimeout(() => {
+      this.timeout = setTimeout(() => {
         this.updateETAs();
       }, Settings.ETA_UPDATE_RATE_MS);
     }
@@ -118,6 +119,7 @@ export default class App extends React.Component<props, state> {
 
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchID);
+    if (this.timeout) clearTimeout(this.timeout);
   }
 
   handleMarkerPress = (e: any) => {
@@ -135,6 +137,7 @@ export default class App extends React.Component<props, state> {
   });
 
   map: ?Object;
+  timeout: ?any;
   watchID: number;
 
   render() {
@@ -166,15 +169,18 @@ export default class App extends React.Component<props, state> {
                   longitude: this.state.stop.LONG
                 }}
                 pinColor={Colors.accentDark.hex()}
-              />
+              >
+                <MapMarker text={this.state.stop.COD_UBIC_P} isStop />
+              </Marker>
             )}
             {this.state.buses.map(bus => (
               <Marker
                 identifier={bus.code.toString()}
                 key={bus.code.toString()}
                 coordinate={bus.coordinates}
-                pinColor={Colors.primaryDark.hex()}
-              />
+              >
+                <MapMarker text={bus.line} />
+              </Marker>
             ))}
           </MapView>
         )}
