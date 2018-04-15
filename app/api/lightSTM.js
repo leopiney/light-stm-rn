@@ -84,15 +84,19 @@ export default {
       "select COD_UBIC_P, DESC_LINEA, VARIANTS_CODES, VARIANTS_DESCRIPTIONS, LAT, LONG from FAVORITES join BUS_STOP on ID = COD_UBIC_P;"
     );
 
-    const favoriteStops: Array<FavoriteBusStop> = [
-      ...new Set(
-        _array.map(({ COD_UBIC_P, LAT, LONG }) => ({
+    const favoriteStops: Array<FavoriteBusStop> = [];
+    const uniqueStopsIds = new Set();
+
+    for (const { COD_UBIC_P, LAT, LONG } of _array) {
+      if (!uniqueStopsIds.has(COD_UBIC_P)) {
+        uniqueStopsIds.add(COD_UBIC_P);
+        favoriteStops.push({
           COD_UBIC_P,
           LAT,
           LONG
-        }))
-      )
-    ];
+        });
+      }
+    }
 
     const favoriteStopsLines: { [number]: Array<LineVariants> } = _array.reduce(
       (
