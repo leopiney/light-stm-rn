@@ -42,6 +42,7 @@
     "react-native": "0.52.0",
     "react-native-button": "^2.3.0",
     "react-native-maps": "^0.20.1",
+    "react-native-popup-menu": "^0.12.4",
     "react-native-progress": "^3.4.0",
     "react-navigation": "^1.1.2"
   }

@@ -1,5 +1,6 @@
 import React from "react";
 import { StackNavigator } from "react-navigation";
+import { MenuProvider } from "react-native-popup-menu";
 
 import Start from "./app/containers/start";
 import Dashboard from "./app/containers/dashboard";
@@ -7,14 +8,30 @@ import SelectLine from "./app/containers/selectLine";
 import LineMap from "./app/containers/lineMap";
 
 import { setUpDatabase } from "./app/store/db";
+import Colors from "./app/utils/colors";
 
 setUpDatabase();
 
 const App = StackNavigator({
+  Dashboard: {
+    screen: Dashboard,
+    navigationOptions: {
+      title: "LightSTM",
+      headerStyle: {
+        backgroundColor: Colors.primary.string()
+      },
+      headerTitleStyle: {
+        color: Colors.white.string()
+      }
+    }
+  },
   Home: { screen: Start, navigationOptions: { header: null } },
-  Dashboard: { screen: Dashboard },
   SelectLine: { screen: SelectLine, navigationOptions: { header: null } },
   LineMap: { screen: LineMap, navigationOptions: { header: null } }
 });
 
-export default () => <App />;
+export default () => (
+  <MenuProvider>
+    <App />
+  </MenuProvider>
+);

@@ -3,13 +3,15 @@ import React from "react";
 
 import { StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import * as Progress from "react-native-progress";
 
 import LightSTM from "../api/lightSTM";
 import Colors from "../utils/colors";
+import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
 
 import LineEta from "./lineETA";
+import FavoriteCardMenu from "./favoriteCardMenu";
+import Loading from "./loading";
 
 type props = {
   stop: FavoriteBusStop,
@@ -21,6 +23,7 @@ type state = {
   etas: {
     [string]: number[]
   },
+  deleted: boolean,
   loading: boolean
 };
 
@@ -31,6 +34,7 @@ const styles = StyleSheet.create({
     height: 304,
     margin: 4,
     overflow: "hidden",
+    position: "relative",
     shadowOpacity: 0.75,
     shadowRadius: 5,
     shadowColor: "red",
@@ -48,6 +52,12 @@ const styles = StyleSheet.create({
   map: {
     height: 200,
     width: "100%"
+  },
+  menu: {
+    bottom: 0,
+    position: "absolute",
+    right: 0,
+    width: 24
   }
 });
 
@@ -57,11 +67,16 @@ export default class FavoriteCard extends React.Component<props, state> {
     this.state = {
       buses: [],
       etas: {},
+      deleted: false,
       loading: true
     };
   }
 
   componentDidMount() {
+    this.updateETAs();
+  }
+
+  updateETAs = () => {
     const { stop, linesVariants } = this.props;
 
     LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants).then(
@@ -80,13 +95,22 @@ export default class FavoriteCard extends React.Component<props, state> {
 
         if (nextETAs.length > 0)
           setTimeout(() => this.map && this.map.fitToElements(true));
+
+        setTimeout(() => {
+          this.setState({ loading: true });
+          this.updateETAs();
+        }, Settings.ETA_UPDATE_RATE_MS);
       }
     );
-  }
+  };
 
   map: ?Object;
 
   render() {
+    if (this.state.deleted) {
+      return null;
+    }
+
     const { stop } = this.props;
     return (
       <View elevation={1} style={styles.card}>
@@ -126,14 +150,8 @@ export default class FavoriteCard extends React.Component<props, state> {
         </MapView>
 
         <View style={styles.etasContainer}>
-          {this.state.loading && (
-            <Progress.Circle
-              color={Colors.accent.string()}
-              size={48}
-              thickness={6}
-              indeterminate
-            />
-          )}
+          <Loading loading={this.state.loading} size={48} />
+
           {!this.state.loading &&
             this.props.linesVariants.map(lineVariants => (
               <LineEta
@@ -143,6 +161,14 @@ export default class FavoriteCard extends React.Component<props, state> {
               />
             ))}
         </View>
+
+        <FavoriteCardMenu
+          style={styles.menu}
+          onDelete={async () => {
+            await LightSTM.removeFavorite(stop.COD_UBIC_P);
+            this.setState({ deleted: true });
+          }}
+        />
       </View>
     );
   }

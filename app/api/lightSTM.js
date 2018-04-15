@@ -15,6 +15,7 @@ export default {
     lineDesc: string,
     variants: StopVariants
   ) => {
+    // Find the code for this line using the description
     const lineCode = Object.keys(variants.lines).find(
       code => variants.lines[code] === lineDesc
     );
@@ -23,7 +24,10 @@ export default {
     let variantsDescriptions = {};
 
     if (lineCode) {
+      // Get the variants codes for this line
       variantsCodes = variants.variants[lineCode];
+
+      // For each variant code, get the varian description
       variantsDescriptions = variants.variants[lineCode].reduce(
         (obj, code) =>
           Object.assign(obj, {
@@ -45,6 +49,13 @@ export default {
     console.log(
       `Inserted favorite ${stopId}/${lineDesc} with result ${rowsAffected}`
     );
+  },
+  removeFavorite: async (stopId: number) => {
+    const { rowsAffected } = await db.executeSql(
+      "delete from FAVORITES where COD_UBIC_P = ?;",
+      [stopId]
+    );
+    console.log(`Deleted favorite ${stopId} with result ${rowsAffected}`);
   },
   getOrUpdateStopVariants: async (stopId: number) => {
     const { rows: { length, _array } } = await db.executeSql(

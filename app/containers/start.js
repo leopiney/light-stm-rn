@@ -7,7 +7,7 @@ import Button from "react-native-button";
 import Colors from "../utils/colors";
 import GlobalStyles from "../utils/styles";
 
-import { runMigrations, rollbackMigrations } from "../store/migrations";
+import { runMigrations } from "../store/migrations";
 
 const styles = StyleSheet.create({
   container: {
@@ -40,10 +40,8 @@ type props = {
 
 export default class App extends React.Component<props> {
   handlePress = async () => {
-    await rollbackMigrations();
     await runMigrations();
     this.props.navigation.navigate("SelectLine");
-    // this.props.navigation.navigate('Dashboard')
   };
 
   render() {

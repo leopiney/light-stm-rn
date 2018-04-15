@@ -1,16 +1,16 @@
 // @flow
 import React from "react";
 import { StyleSheet, ToastAndroid, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import { NavigationActions } from "react-navigation";
 
+import MapView, { Marker } from "react-native-maps";
 import Button from "react-native-button";
-import * as Progress from "react-native-progress";
 
 import LightSTM from "../api/lightSTM";
 import db from "../store/db";
 import Colors from "../utils/colors";
 import GlobalStyles from "../utils/styles";
-
+import Loading from "../components/loading";
 import type { BusStop } from "../utils/types";
 
 type props = {
@@ -95,7 +95,11 @@ export default class App extends React.Component<props, state> {
     );
 
     // Navigate to dashboard screen
-    this.props.navigation.navigate("Dashboard");
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: "Dashboard" })]
+    });
+    this.props.navigation.dispatch(resetAction);
   };
 
   handleMarkerPress = (e: any) => {
@@ -156,12 +160,7 @@ export default class App extends React.Component<props, state> {
         )}
         {!isPositionReady && (
           <View style={styles.progress}>
-            <Progress.Circle
-              color={Colors.accent.string()}
-              size={60}
-              thickness={6}
-              indeterminate
-            />
+            <Loading loading={!isPositionReady} size={60} />
           </View>
         )}
         <Button
