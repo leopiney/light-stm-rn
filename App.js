@@ -2,10 +2,11 @@ import React from "react";
 import { StackNavigator } from "react-navigation";
 import { MenuProvider } from "react-native-popup-menu";
 
-import Start from "./app/containers/start";
 import Dashboard from "./app/containers/dashboard";
-import SelectLine from "./app/containers/selectLine";
 import LineMap from "./app/containers/lineMap";
+import SelectLine from "./app/containers/selectLine";
+import Start from "./app/containers/start";
+import StopDetail from "./app/containers/stopDetail";
 
 import { setUpDatabase } from "./app/store/db";
 import Colors from "./app/utils/colors";
@@ -26,8 +27,9 @@ const App = StackNavigator({
     }
   },
   Home: { screen: Start, navigationOptions: { header: null } },
+  LineMap: { screen: LineMap, navigationOptions: { header: null } },
   SelectLine: { screen: SelectLine, navigationOptions: { header: null } },
-  LineMap: { screen: LineMap, navigationOptions: { header: null } }
+  StopDetail: { screen: StopDetail }
 });
 
 export default () => (

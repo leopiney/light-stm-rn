@@ -14,8 +14,9 @@ import FavoriteCardMenu from "./favoriteCardMenu";
 import Loading from "./loading";
 
 type props = {
-  stop: FavoriteBusStop,
-  linesVariants: LineVariants[]
+  linesVariants: LineVariants[],
+  navigation: Object,
+  stop: FavoriteBusStop
 };
 
 type state = {
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
     position: "relative",
     shadowOpacity: 0.75,
     shadowRadius: 5,
-    shadowColor: "red",
+    shadowColor: Colors.black.string(),
     shadowOffset: { height: 0, width: 0 },
     width: "100%"
   },
@@ -96,10 +97,12 @@ export default class FavoriteCard extends React.Component<props, state> {
         if (nextETAs.length > 0)
           setTimeout(() => this.map && this.map.fitToElements(true));
 
-        setTimeout(() => {
-          this.setState({ loading: true });
-          this.updateETAs();
-        }, Settings.ETA_UPDATE_RATE_MS);
+        if (Settings.ETA_UPDATE_ENABLE) {
+          setTimeout(() => {
+            this.setState({ loading: true });
+            this.updateETAs();
+          }, Settings.ETA_UPDATE_RATE_MS);
+        }
       }
     );
   };
@@ -132,6 +135,15 @@ export default class FavoriteCard extends React.Component<props, state> {
           ref={map => {
             this.map = map;
           }}
+          onPress={() =>
+            this.props.navigation.navigate("StopDetail", {
+              buses: this.state.buses,
+              etas: this.state.etas,
+              linesVariants: this.props.linesVariants,
+              stop: this.props.stop,
+              title: `Detail for stop ${this.props.stop.COD_UBIC_P}`
+            })
+          }
         >
           <Marker
             identifier={stop.COD_UBIC_P.toString()}

@@ -94,9 +94,10 @@ export default class Dashboard extends React.Component<props, state> {
           {!this.state.loading &&
             favoriteStops.map(stop => (
               <FavoriteCard
-                stop={stop}
-                linesVariants={favoriteStopsLines[stop.COD_UBIC_P]}
                 key={`${stop.COD_UBIC_P}`}
+                linesVariants={favoriteStopsLines[stop.COD_UBIC_P]}
+                navigation={this.props.navigation}
+                stop={stop}
               />
             ))}
         </View>
