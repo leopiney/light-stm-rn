@@ -1,5 +1,6 @@
 // @flow
 import db from "../store/db";
+import { SecureStore } from "expo";
 
 import { getStopVariants, getStopNextETAs } from "./mvd";
 import type {
@@ -46,6 +47,8 @@ export default {
         JSON.stringify(variantsDescriptions)
       ]
     );
+
+    SecureStore.setItemAsync("app.onboardingFinished", "true");
     console.log(
       `Inserted favorite ${stopId}/${lineDesc} with result ${rowsAffected}`
     );

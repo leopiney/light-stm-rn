@@ -5,6 +5,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import Dashboard from "./app/containers/dashboard";
 import LineMap from "./app/containers/lineMap";
 import SelectLine from "./app/containers/selectLine";
+import Splash from "./app/containers/splash";
 import Start from "./app/containers/start";
 import StopDetail from "./app/containers/stopDetail";
 
@@ -14,6 +15,7 @@ import Colors from "./app/utils/colors";
 setUpDatabase();
 
 const App = StackNavigator({
+  Splash: { screen: Splash, navigationOptions: { header: null } },
   Dashboard: {
     screen: Dashboard,
     navigationOptions: {

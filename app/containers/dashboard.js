@@ -7,7 +7,6 @@ import {
   View,
   ScrollView
 } from "react-native";
-import { NavigationActions } from "react-navigation";
 
 import LightSTM from "../api/lightSTM";
 import Colors from "../utils/colors";
@@ -56,7 +55,7 @@ export default class Dashboard extends React.Component<props, state> {
     this.state = { favoriteStops: [], favoriteStopsLines: {}, loading: true };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     LightSTM.getFavorites()
       .then(([favoriteStops, favoriteStopsLines]) => {
         console.log(
@@ -64,16 +63,13 @@ export default class Dashboard extends React.Component<props, state> {
             favoriteStops
           )} with lines ${JSON.stringify(favoriteStopsLines)}`
         );
-        this.setState({ favoriteStops, favoriteStopsLines, loading: false });
-      })
-      .catch(error => {
-        const resetAction = NavigationActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: "Home" })]
+        this.setState({
+          favoriteStops,
+          favoriteStopsLines,
+          loading: false
         });
-        this.props.navigation.dispatch(resetAction);
-        console.log(error);
-      });
+      })
+      .catch(error => console.log(error));
   }
 
   static navigationOptions = (props: { navigation: Object }) => ({
