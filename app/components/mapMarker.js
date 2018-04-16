@@ -23,20 +23,22 @@ export default (props: {
       style={{
         backgroundColor: props.isStop
           ? props.isSelected
-            ? Colors.primary.string()
+            ? Colors.accentDark.string()
             : Colors.primaryDark.string()
           : Colors.accentDark.string(),
         borderRadius: 3,
         padding: 4
       }}
     >
-      <Text style={styles.text}>{props.text}</Text>
+      <Text style={styles.text}>
+        {props.isSelected ? `·${props.text}·` : props.text}
+      </Text>
     </View>
     <View
       style={{
         backgroundColor: props.isStop
           ? props.isSelected
-            ? Colors.primary.string()
+            ? Colors.accentDark.string()
             : Colors.primaryDark.string()
           : Colors.accentDark.string(),
         borderBottomLeftRadius: 3,

@@ -46,6 +46,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     marginRight: 16
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center"
   }
 });
 
@@ -86,7 +90,11 @@ export default class Dashboard extends React.Component<props, state> {
     return (
       <ScrollView style={styles.containerScroll}>
         <View style={styles.container}>
-          <Loading loading={this.state.loading} size={48} />
+          {this.state.loading && (
+            <View style={styles.loading}>
+              <Loading loading={!this.state.loading} size={60} />
+            </View>
+          )}
           {!this.state.loading &&
             favoriteStops.map(stop => (
               <FavoriteCard

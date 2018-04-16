@@ -15,6 +15,13 @@ import type { BusStop } from "../utils/types";
 import Loading from "../components/loading";
 import MapMarker from "../components/mapMarker";
 
+type Region = {
+  latitude: number,
+  longitude: number,
+  latitudeDelta: number,
+  longitudeDelta: number
+};
+
 type props = {
   navigation: Object
 };
@@ -22,8 +29,10 @@ type props = {
 type state = {
   busStops: BusStop[],
   busStopsSelected: Set<BusStop>,
-  latitude: number,
-  longitude: number
+  currentRegion: Region,
+  loading: boolean,
+  myLatitude: number,
+  myLongitude: number
 };
 
 const styles = StyleSheet.create({
@@ -44,14 +53,24 @@ const styles = StyleSheet.create({
   }
 });
 
+const LATITUDE_DELTA = 0.0228195;
+const LONGITUDE_DELTA = 0.01041975;
+
 export default class App extends React.Component<props, state> {
   constructor() {
     super();
     this.state = {
       busStops: [],
       busStopsSelected: new Set(),
-      latitude: 0,
-      longitude: 0
+      currentRegion: {
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0,
+        longitudeDelta: 0
+      },
+      loading: true,
+      myLatitude: 0,
+      myLongitude: 0
     };
   }
 
@@ -60,7 +79,16 @@ export default class App extends React.Component<props, state> {
     navigator.geolocation.getCurrentPosition(
       position => {
         const { latitude, longitude } = position.coords;
-        this.setState({ latitude, longitude });
+        this.setState({
+          myLatitude: latitude,
+          myLongitude: longitude,
+          currentRegion: {
+            latitude,
+            longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA
+          }
+        });
       },
       error => ToastAndroid.show(error.message, ToastAndroid.SHORT),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
@@ -126,48 +154,66 @@ export default class App extends React.Component<props, state> {
     }
   };
 
+  handleMapReady = () => {
+    this.setState({ loading: false });
+  };
+
+  handleRegionChangeComplete = (currentRegion: Region) => {
+    this.setState({ currentRegion });
+  };
+
   watchID: number;
 
   render() {
     const isPositionReady =
-      this.state.latitude !== 0 && this.state.longitude !== 0;
+      this.state.myLatitude !== 0 && this.state.myLongitude !== 0;
     return (
       <View style={styles.container}>
         {isPositionReady && (
           <MapView
             initialRegion={{
-              latitude: this.state.latitude,
-              longitude: this.state.longitude,
-              latitudeDelta: 0.10142,
-              longitudeDelta: 0.04631
+              latitude: this.state.myLatitude,
+              longitude: this.state.myLongitude,
+              latitudeDelta: LATITUDE_DELTA,
+              longitudeDelta: LONGITUDE_DELTA
             }}
-            style={styles.map}
             onMarkerPress={this.handleMarkerPress}
+            onMapReady={this.handleMapReady}
+            onRegionChangeComplete={this.handleRegionChangeComplete}
+            style={styles.map}
           >
-            {this.state.busStops.slice(0, 10).map(stop => (
-              <Marker
-                identifier={stop.COD_UBIC_P.toString()}
-                key={`${stop.COD_UBIC_P}${JSON.stringify(
-                  this.state.busStopsSelected.has(stop)
-                )}`}
-                coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
-              >
-                <MapMarker
-                  text={stop.COD_UBIC_P}
-                  isSelected={this.state.busStopsSelected.has(stop)}
-                  isStop
-                />
-              </Marker>
-            ))}
+            {this.state.busStops
+              .filter(
+                stop =>
+                  Math.abs(this.state.currentRegion.latitude - stop.LAT) <
+                    this.state.currentRegion.latitudeDelta / 2 &&
+                  Math.abs(this.state.currentRegion.longitude - stop.LONG) <
+                    this.state.currentRegion.longitudeDelta / 2
+              )
+              .map(stop => (
+                <Marker
+                  identifier={stop.COD_UBIC_P.toString()}
+                  key={`${stop.LAT}${stop.LONG}${JSON.stringify(
+                    this.state.busStopsSelected.has(stop)
+                  )}`}
+                  coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
+                >
+                  <MapMarker
+                    text={stop.COD_UBIC_P}
+                    isSelected={this.state.busStopsSelected.has(stop)}
+                    isStop={true}
+                  />
+                </Marker>
+              ))}
           </MapView>
         )}
-        {!isPositionReady && (
+        {this.state.loading && (
           <View style={styles.loading}>
             <Loading loading={!isPositionReady} size={60} />
           </View>
         )}
         <Button
-          disabled={!isPositionReady}
+          disabled={this.state.busStopsSelected.size === 0}
           style={GlobalStyles.button}
           styleDisabled={GlobalStyles.buttonDisabled}
           onPress={this.handleButtonPress}
