@@ -5,7 +5,12 @@
     "version": "0.0.1",
     "sdkVersion": "25.0.0",
     "android": {
-      "package": "com.leopiney.lightstm"
+      "package": "com.leopiney.lightstm",
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      }
     },
     "packagerOpts": {
       "assetExts": ["db"]
