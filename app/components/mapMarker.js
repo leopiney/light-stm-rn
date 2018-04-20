@@ -2,8 +2,10 @@
 import React from "react";
 
 import { StyleSheet, Text, View } from "react-native";
+import { Marker } from "react-native-maps";
 
 import Colors from "../utils/colors";
+import type { LatLng } from "../utils/types";
 
 const styles = StyleSheet.create({
   marker: {
@@ -13,7 +15,7 @@ const styles = StyleSheet.create({
   text: { color: Colors.white.string(), fontSize: 10 }
 });
 
-export default (props: {
+const MarkerIcon = (props: {
   text: string | number,
   isStop?: boolean,
   isSelected?: boolean
@@ -48,4 +50,20 @@ export default (props: {
       }}
     />
   </View>
+);
+
+export default (props: {
+  coordinate: LatLng,
+  identifier: string,
+  text: string | number,
+  isSelected?: boolean,
+  isStop?: boolean
+}) => (
+  <Marker identifier={props.identifier} coordinate={props.coordinate}>
+    <MarkerIcon
+      text={props.text}
+      isStop={props.isStop}
+      isSelected={props.isSelected}
+    />
+  </Marker>
 );

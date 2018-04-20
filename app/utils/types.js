@@ -59,3 +59,15 @@ export type BusETA = {
   variantCode: number,
   variantDesc: string
 };
+
+export type Region = {
+  latitude: number,
+  longitude: number,
+  latitudeDelta: number,
+  longitudeDelta: number
+};
+
+export type LatLng = {
+  latitude: number,
+  longitude: number
+};

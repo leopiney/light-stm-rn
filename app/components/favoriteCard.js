@@ -2,7 +2,6 @@
 import React from "react";
 
 import { StyleSheet, Text, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
 
 import LightSTM from "../api/lightSTM";
 import Colors from "../utils/colors";
@@ -13,6 +12,7 @@ import FavoriteCardMenu from "./favoriteCardMenu";
 import LineEta from "./lineETA";
 import Loading from "./loading";
 import MapMarker from "./mapMarker";
+import MapView from "./mapView";
 
 type props = {
   linesVariants: LineVariants[],
@@ -107,7 +107,23 @@ export default class FavoriteCard extends React.Component<props, state> {
         this.setState({ buses: nextETAs, etas, loading: false });
 
         if (nextETAs.length > 0)
-          setTimeout(() => this.map && this.map.fitToElements(true));
+          setTimeout(() => {
+            const coordinates = nextETAs.map(bus => bus.coordinates);
+            const { stop } = this.props;
+            coordinates.push({ latitude: stop.LAT, longitude: stop.LONG });
+
+            if (this.map) {
+              this.map.fitToCoordinates(coordinates, {
+                edgePadding: {
+                  top: 20,
+                  bottom: 20,
+                  left: 20,
+                  right: 20
+                },
+                animated: true
+              });
+            }
+          });
 
         if (Settings.ETA_UPDATE_ENABLE) {
           this.timeout = setTimeout(() => {
@@ -131,23 +147,14 @@ export default class FavoriteCard extends React.Component<props, state> {
     return (
       <View elevation={1} style={styles.card}>
         <MapView
-          initialRegion={{
+          initialCoordinates={{
             latitude: stop.LAT,
-            longitude: stop.LONG,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.002
+            longitude: stop.LONG
           }}
-          liteMode
-          zoomEnabled={false}
-          zoomControlEnabled={false}
-          rotateEnabled={false}
-          scrollEnabled={false}
-          pitchEnabled={false}
-          loadingEnabled
-          style={styles.map}
-          ref={map => {
+          innerRef={map => {
             this.map = map;
           }}
+          styles={styles.map}
           onPress={() =>
             this.props.navigation.navigate("StopDetail", {
               buses: this.state.buses,
@@ -157,22 +164,22 @@ export default class FavoriteCard extends React.Component<props, state> {
               title: `Detail for stop ${this.props.stop.COD_UBIC_P}`
             })
           }
+          type="static"
         >
-          <Marker
-            identifier={stop.COD_UBIC_P.toString()}
-            key={stop.COD_UBIC_P}
+          <MapMarker
             coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
-          >
-            <MapMarker text={stop.COD_UBIC_P} isStop />
-          </Marker>
+            identifier={stop.COD_UBIC_P.toString()}
+            isStop
+            key={stop.COD_UBIC_P}
+            text={stop.COD_UBIC_P}
+          />
           {this.state.buses.map(bus => (
-            <Marker
+            <MapMarker
+              coordinate={bus.coordinates}
               identifier={bus.code.toString()}
               key={bus.code.toString()}
-              coordinate={bus.coordinates}
-            >
-              <MapMarker text={bus.line} />
-            </Marker>
+              text={bus.line}
+            />
           ))}
         </MapView>
 

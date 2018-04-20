@@ -2,15 +2,13 @@
 import React from "react";
 import { StyleSheet, ToastAndroid, View } from "react-native";
 
-import MapView, { Marker } from "react-native-maps";
-
 import LightSTM from "../api/lightSTM";
 import Colors from "../utils/colors";
 import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
 
-import Loading from "../components/loading";
 import MapMarker from "../components/mapMarker";
+import MapView from "../components/mapView";
 
 type props = {
   navigation: Object
@@ -21,9 +19,7 @@ type state = {
   etas: {
     [string]: number[]
   },
-  latitude: number,
   linesVariants: LineVariants[],
-  longitude: number,
   stop: FavoriteBusStop
 };
 
@@ -36,10 +32,6 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject
-  },
-  loading: {
-    flex: 1,
-    justifyContent: "center"
   }
 });
 
@@ -49,9 +41,7 @@ export default class App extends React.Component<props, state> {
     this.state = {
       buses: [],
       etas: {},
-      latitude: 0,
       linesVariants: [],
-      longitude: 0,
       stop: {
         COD_UBIC_P: 0,
         LAT: 0,
@@ -67,16 +57,6 @@ export default class App extends React.Component<props, state> {
       linesVariants: this.props.navigation.getParam("linesVariants"),
       stop: this.props.navigation.getParam("stop")
     });
-
-    // Update current position of user
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        this.setState({ latitude, longitude });
-      },
-      error => ToastAndroid.show(error.message, ToastAndroid.SHORT),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
 
     this.triggerETAs();
   }
@@ -95,8 +75,8 @@ export default class App extends React.Component<props, state> {
   updateETAs = () => {
     const { stop, linesVariants } = this.state;
 
-    LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants).then(
-      nextETAs => {
+    LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants)
+      .then(nextETAs => {
         const etas: { [string]: number[] } = {};
         this.state.linesVariants.forEach(l => {
           etas[l.line] = [];
@@ -110,11 +90,27 @@ export default class App extends React.Component<props, state> {
         this.setState({ buses: nextETAs, etas });
 
         if (nextETAs.length > 0)
-          setTimeout(() => this.map && this.map.fitToElements(true));
+          setTimeout(() => {
+            const coordinates = nextETAs.map(bus => bus.coordinates);
+            const { stop } = this.state;
+            coordinates.push({ latitude: stop.LAT, longitude: stop.LONG });
+
+            if (this.map) {
+              this.map.fitToCoordinates(coordinates, {
+                edgePadding: {
+                  top: 20,
+                  bottom: 20,
+                  left: 20,
+                  right: 20
+                },
+                animated: true
+              });
+            }
+          });
 
         this.triggerETAs();
-      }
-    );
+      })
+      .catch(error => ToastAndroid.show(error.message, ToastAndroid.SHORT));
   };
 
   componentWillUnmount() {
@@ -141,54 +137,42 @@ export default class App extends React.Component<props, state> {
   watchID: number;
 
   render() {
-    const isPositionReady =
-      this.state.latitude !== 0 && this.state.longitude !== 0;
-
     return (
       <View style={styles.container}>
-        {isPositionReady && (
-          <MapView
-            initialRegion={{
-              latitude: this.state.latitude,
-              longitude: this.state.longitude,
-              latitudeDelta: 0.10142,
-              longitudeDelta: 0.04631
-            }}
-            style={styles.map}
-            onMarkerPress={this.handleMarkerPress}
-            ref={map => {
-              this.map = map;
-            }}
-          >
-            {this.state.stop.COD_UBIC_P && (
-              <Marker
-                identifier={this.state.stop.COD_UBIC_P.toString()}
-                key={this.state.stop.COD_UBIC_P}
-                coordinate={{
-                  latitude: this.state.stop.LAT,
-                  longitude: this.state.stop.LONG
-                }}
-                pinColor={Colors.accentDark.hex()}
-              >
-                <MapMarker text={this.state.stop.COD_UBIC_P} isStop />
-              </Marker>
-            )}
-            {this.state.buses.map(bus => (
-              <Marker
-                identifier={bus.code.toString()}
-                key={bus.code.toString()}
-                coordinate={bus.coordinates}
-              >
-                <MapMarker text={bus.line} />
-              </Marker>
-            ))}
-          </MapView>
-        )}
-        {!isPositionReady && (
-          <View style={styles.loading}>
-            <Loading loading={!isPositionReady} size={60} />
-          </View>
-        )}
+        <MapView
+          initialCoordinates={{
+            latitude: this.state.stop.LAT,
+            longitude: this.state.stop.LONG
+          }}
+          innerRef={map => {
+            this.map = map;
+          }}
+          styles={styles.map}
+          onMarkerPress={this.handleMarkerPress}
+          type="full"
+        >
+          {this.state.stop.COD_UBIC_P && (
+            <MapMarker
+              coordinate={{
+                latitude: this.state.stop.LAT,
+                longitude: this.state.stop.LONG
+              }}
+              identifier={this.state.stop.COD_UBIC_P.toString()}
+              isStop={true}
+              key={this.state.stop.COD_UBIC_P}
+              pinColor={Colors.accentDark.hex()}
+              text={this.state.stop.COD_UBIC_P}
+            />
+          )}
+          {this.state.buses.map(bus => (
+            <MapMarker
+              coordinate={bus.coordinates}
+              identifier={bus.code.toString()}
+              key={bus.code.toString()}
+              text={bus.line}
+            />
+          ))}
+        </MapView>
       </View>
     );
   }
