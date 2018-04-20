@@ -111,6 +111,9 @@ export default class App extends React.Component<props, state> {
   handleButtonPress = async () => {
     // Add all selected bus stops to the favorite table
     const busStops = Array.from(this.state.busStopsSelected);
+    console.log(
+      `Getting or updating stop variants for stops ${JSON.stringify(busStops)}`
+    );
     await Promise.all(
       busStops.map(async stop => {
         const stopVariants = await LightSTM.getOrUpdateStopVariants(

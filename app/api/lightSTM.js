@@ -62,7 +62,8 @@ export default {
   },
   getOrUpdateStopVariants: async (stopId: number) => {
     const { rows: { length, _array } } = await db.executeSql(
-      "select COD_UBIC_P, VARIANTS_JSON, VARIANTS_CODES_UPDATED_AT from BUS_STOP_VARIANTS;"
+      "select COD_UBIC_P, VARIANTS_JSON, VARIANTS_CODES_UPDATED_AT from BUS_STOP_VARIANTS where COD_UBIC_P = ?;",
+      [stopId]
     );
     let stopVariants = {};
 
