@@ -8,7 +8,7 @@ import {
   ScrollView
 } from "react-native";
 
-import LightSTM from "../api/lightSTM";
+import { getFavorites } from "../api/lightSTM";
 import Colors from "../utils/colors";
 import type { FavoriteBusStop, LineVariants } from "../utils/types";
 
@@ -60,7 +60,7 @@ export default class Dashboard extends React.Component<props, state> {
   }
 
   componentWillMount() {
-    LightSTM.getFavorites()
+    getFavorites()
       .then(([favoriteStops, favoriteStopsLines]) => {
         console.log(
           `Got favorite stops ${JSON.stringify(

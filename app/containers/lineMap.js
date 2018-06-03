@@ -5,7 +5,7 @@ import { NavigationActions } from "react-navigation";
 
 import Button from "react-native-button";
 
-import LightSTM from "../api/lightSTM";
+import { addFavorite, getOrUpdateStopVariants } from "../api/lightSTM";
 import db from "../store/db";
 import Colors from "../utils/colors";
 import GlobalStyles from "../utils/styles";
@@ -104,14 +104,8 @@ export default class App extends React.Component<props, state> {
     );
     await Promise.all(
       busStops.map(async stop => {
-        const stopVariants = await LightSTM.getOrUpdateStopVariants(
-          stop.COD_UBIC_P
-        );
-        return LightSTM.addFavorite(
-          stop.COD_UBIC_P,
-          stop.DESC_LINEA,
-          stopVariants
-        );
+        const stopVariants = await getOrUpdateStopVariants(stop.COD_UBIC_P);
+        return addFavorite(stop.COD_UBIC_P, stop.DESC_LINEA, stopVariants);
       })
     );
 

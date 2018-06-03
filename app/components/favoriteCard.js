@@ -3,7 +3,7 @@ import React from "react";
 
 import { StyleSheet, Text, View } from "react-native";
 
-import LightSTM from "../api/lightSTM";
+import { getFavoriteNextETAs, removeFavorite } from "../api/lightSTM";
 import Colors from "../utils/colors";
 import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
@@ -92,7 +92,7 @@ export default class FavoriteCard extends React.Component<props, state> {
   updateETAs = () => {
     const { stop, linesVariants } = this.props;
 
-    LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants)
+    getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants)
       .then(nextETAs => {
         const etas: { [string]: number[] } = {};
         this.props.linesVariants.forEach(l => {
@@ -205,7 +205,7 @@ export default class FavoriteCard extends React.Component<props, state> {
         <FavoriteCardMenu
           style={styles.menu}
           onDelete={async () => {
-            await LightSTM.removeFavorite(stop.COD_UBIC_P);
+            await removeFavorite(stop.COD_UBIC_P);
             this.setState({ deleted: true });
           }}
         />

@@ -12,6 +12,9 @@
         }
       }
     },
+    "ios": {
+      "bundleIdentifier": "com.leopiney.lightstm"
+    },
     "packagerOpts": {
       "assetExts": ["db"]
     }

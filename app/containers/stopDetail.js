@@ -2,7 +2,7 @@
 import React from "react";
 import { StyleSheet, ToastAndroid, View } from "react-native";
 
-import LightSTM from "../api/lightSTM";
+import { getFavoriteNextETAs } from "../api/lightSTM";
 import Colors from "../utils/colors";
 import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
@@ -75,7 +75,7 @@ export default class App extends React.Component<props, state> {
   updateETAs = () => {
     const { stop, linesVariants } = this.state;
 
-    LightSTM.getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants)
+    getFavoriteNextETAs(stop.COD_UBIC_P, linesVariants)
       .then(nextETAs => {
         const etas: { [string]: number[] } = {};
         this.state.linesVariants.forEach(l => {
