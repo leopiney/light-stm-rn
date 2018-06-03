@@ -50,14 +50,14 @@ type sqlResponse = {
   rows: {
     length: number,
     item: number => Object,
-    _array: Array<Object>
+    _array: Object[]
   }
 };
 
 export default {
   executeSql(
     query: string,
-    args: Array<number | string> = []
+    args: (number | string)[] = []
   ): Promise<sqlResponse> {
     return new Promise(async (resolve, reject) => {
       if (!conn.db) {

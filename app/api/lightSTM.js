@@ -90,7 +90,7 @@ export const getFavorites = async () => {
     "select COD_UBIC_P, DESC_LINEA, VARIANTS_CODES, VARIANTS_DESCRIPTIONS, LAT, LONG from FAVORITES join BUS_STOP on ID = COD_UBIC_P;"
   );
 
-  const favoriteStops: Array<FavoriteBusStop> = [];
+  const favoriteStops: FavoriteBusStop[] = [];
   const uniqueStopsIds = new Set();
 
   for (const { COD_UBIC_P, LAT, LONG } of _array) {
@@ -104,7 +104,7 @@ export const getFavorites = async () => {
     }
   }
 
-  const favoriteStopsLines: { [number]: Array<LineVariants> } = _array.reduce(
+  const favoriteStopsLines: { [number]: LineVariants[] } = _array.reduce(
     (acc, { COD_UBIC_P, DESC_LINEA, VARIANTS_CODES, VARIANTS_DESCRIPTIONS }) =>
       Object.assign(acc, {
         [COD_UBIC_P]: acc[COD_UBIC_P]

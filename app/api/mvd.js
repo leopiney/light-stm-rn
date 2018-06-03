@@ -30,7 +30,7 @@ type StopVariantsAPI = {
   descripcion: string,
   destinos: { [string]: string },
   lineas: { [string]: string },
-  variantes: { [string]: Array<number> }
+  variantes: { [string]: number[] }
 };
 
 export const getStopVariants = async (
