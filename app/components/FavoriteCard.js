@@ -8,11 +8,11 @@ import Colors from "../utils/colors";
 import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
 
-import FavoriteCardMenu from "./favoriteCardMenu";
-import LineEta from "./lineETA";
-import Loading from "./loading";
-import MapMarker from "./mapMarker";
-import MapView from "./mapView";
+import FavoriteCardMenu from "./FavoriteCardMenu";
+import LineEta from "./LineETA";
+import Loading from "./Loading";
+import MapMarker from "./MapMarker";
+import MapView from "./MapView";
 
 type props = {
   linesVariants: LineVariants[],

@@ -11,9 +11,9 @@ import Colors from "../utils/colors";
 import GlobalStyles from "../utils/styles";
 import type { BusStop, Region } from "../utils/types";
 
-import Loading from "../components/loading";
-import MapMarker from "../components/mapMarker";
-import MapView from "../components/mapView";
+import Loading from "../components/Loading";
+import MapMarker from "../components/MapMarker";
+import MapView from "../components/MapView";
 
 type props = {
   navigation: Object

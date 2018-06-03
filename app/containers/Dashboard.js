@@ -12,8 +12,8 @@ import { getFavorites } from "../api/lightSTM";
 import Colors from "../utils/colors";
 import type { FavoriteBusStop, LineVariants } from "../utils/types";
 
-import FavoriteCard from "../components/favoriteCard";
-import Loading from "../components/loading";
+import FavoriteCard from "../components/FavoriteCard";
+import Loading from "../components/Loading";
 
 type props = {
   navigation: Object

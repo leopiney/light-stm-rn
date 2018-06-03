@@ -7,8 +7,8 @@ import Colors from "../utils/colors";
 import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
 
-import MapMarker from "../components/mapMarker";
-import MapView from "../components/mapView";
+import MapMarker from "../components/MapMarker";
+import MapView from "../components/MapView";
 
 type props = {
   navigation: Object

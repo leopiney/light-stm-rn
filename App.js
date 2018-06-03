@@ -2,12 +2,12 @@ import React from "react";
 import { StackNavigator } from "react-navigation";
 import { MenuProvider } from "react-native-popup-menu";
 
-import Dashboard from "./app/containers/dashboard";
-import LineMap from "./app/containers/lineMap";
-import SelectLine from "./app/containers/selectLine";
-import Splash from "./app/containers/splash";
-import Start from "./app/containers/start";
-import StopDetail from "./app/containers/stopDetail";
+import Dashboard from "./app/containers/Dashboard";
+import LineMap from "./app/containers/LineMap";
+import SelectLine from "./app/containers/SelectLine";
+import Splash from "./app/containers/Splash";
+import Start from "./app/containers/Start";
+import StopDetail from "./app/containers/StopDetail";
 
 import { setUpDatabase } from "./app/store/db";
 import Colors from "./app/utils/colors";
