@@ -17,11 +17,14 @@ Below you'll find information about performing common tasks. The most recent ver
 
 ## STM MVD "lent" data
 
-1. Download [STM MVD APK](https://apkpure.com/stm-mvd/com.matungos.stm.mvd)
-2. Rename downloaded file and add `.zip` extention.
-3. Open the console and `sudo unzip STM*.apk.zip`
-4. Unzip `unzip assets/stm.zip`
-5. Now you have the database `stm.sqlite3` :party-parrot:
+1. Download the [STM MVD](https://apkpure.com/stm-mvd/com.matungos.stm.mvd) APK file.
+2. Unzip the preloaded database inside:
+
+```
+unzip -p <path-to-apk> assets/stm.zip > stm.zip
+unzip stm.zip
+```
+3. Now you have the database `stm.sqlite3` :party-parrot:
 
 ## CUCTSA API
 
