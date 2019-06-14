@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { StyleSheet, ToastAndroid, View } from "react-native";
-import { NavigationActions } from "react-navigation";
+import { NavigationActions, StackActions } from "react-navigation";
 
 import Button from "react-native-button";
 
@@ -83,11 +83,10 @@ export default class App extends React.Component<props, state> {
     );
 
     // Get all bus stops for line passed through the navigator parameters
-    db
-      .executeSql(
-        "select COD_UBIC_P, LAT, LONG, DESC_LINEA from PARADAS left join BUS_STOP on ID = COD_UBIC_P where DESC_LINEA = ?;",
-        [this.props.navigation.getParam("line")]
-      )
+    db.executeSql(
+      "select COD_UBIC_P, LAT, LONG, DESC_LINEA from PARADAS left join BUS_STOP on ID = COD_UBIC_P where DESC_LINEA = ?;",
+      [this.props.navigation.getParam("line")]
+    )
       .then(({ rows: { _array } }) => this.setState({ busStops: _array }))
       .catch(error => ToastAndroid.show(error.message, ToastAndroid.LONG));
   }
@@ -102,15 +101,20 @@ export default class App extends React.Component<props, state> {
     console.log(
       `Getting or updating stop variants for stops ${JSON.stringify(busStops)}`
     );
-    await Promise.all(
-      busStops.map(async stop => {
-        const stopVariants = await getOrUpdateStopVariants(stop.COD_UBIC_P);
-        return addFavorite(stop.COD_UBIC_P, stop.DESC_LINEA, stopVariants);
-      })
-    );
+    try {
+      await Promise.all(
+        busStops.map(async stop => {
+          const stopVariants = await getOrUpdateStopVariants(stop.COD_UBIC_P);
+          return addFavorite(stop.COD_UBIC_P, stop.DESC_LINEA, stopVariants);
+        })
+      );
+    } catch (err) {
+      console.exception(`Failed to add favorite: ${err}`);
+    }
 
     // Navigate to dashboard screen
-    const resetAction = NavigationActions.reset({
+    console.log("Navigating to Dashboard screen");
+    const resetAction = StackActions.reset({
       index: 0,
       actions: [NavigationActions.navigate({ routeName: "Dashboard" })]
     });
@@ -168,20 +172,18 @@ export default class App extends React.Component<props, state> {
             styles={styles.map}
             type="full"
           >
-            {this.state.busStops
-              .filter(this.filterStopByRegion)
-              .map(stop => (
-                <MapMarker
-                  coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
-                  identifier={stop.COD_UBIC_P.toString()}
-                  key={`${stop.LAT}${stop.LONG}${JSON.stringify(
-                    this.state.busStopsSelected.has(stop)
-                  )}`}
-                  isSelected={this.state.busStopsSelected.has(stop)}
-                  isStop={true}
-                  text={stop.COD_UBIC_P}
-                />
-              ))}
+            {this.state.busStops.filter(this.filterStopByRegion).map(stop => (
+              <MapMarker
+                coordinate={{ latitude: stop.LAT, longitude: stop.LONG }}
+                identifier={stop.COD_UBIC_P.toString()}
+                key={`${stop.LAT}${stop.LONG}${JSON.stringify(
+                  this.state.busStopsSelected.has(stop)
+                )}`}
+                isSelected={this.state.busStopsSelected.has(stop)}
+                isStop={true}
+                text={stop.COD_UBIC_P}
+              />
+            ))}
           </MapView>
         )}
         {!isPositionReady && (

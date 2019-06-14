@@ -1,14 +1,15 @@
-// @flow
-import db from "../store/db";
-import { SecureStore } from "expo";
+import * as SecureStore from "expo-secure-store";
 
-import { getStopVariants, getStopNextETAs } from "./mvd";
 import type {
   BusETA,
   FavoriteBusStop,
   LineVariants,
   StopVariants
 } from "../utils/types";
+import { getStopNextETAs, getStopVariants } from "./mvd";
+
+// @flow
+import db from "../store/db";
 
 export const addFavorite = async (
   stopId: number,
@@ -62,7 +63,9 @@ export const removeFavorite = async (stopId: number) => {
 };
 
 export const getOrUpdateStopVariants = async (stopId: number) => {
-  const { rows: { length, _array } } = await db.executeSql(
+  const {
+    rows: { length, _array }
+  } = await db.executeSql(
     "select COD_UBIC_P, VARIANTS_JSON, VARIANTS_CODES_UPDATED_AT from BUS_STOP_VARIANTS where COD_UBIC_P = ?;",
     [stopId]
   );
@@ -72,7 +75,7 @@ export const getOrUpdateStopVariants = async (stopId: number) => {
     stopVariants = await getStopVariants(stopId);
     await db.executeSql(
       "insert into BUS_STOP_VARIANTS (COD_UBIC_P, VARIANTS_JSON, VARIANTS_CODES_UPDATED_AT) values (?, ?, ?);",
-      [stopId, JSON.stringify(stopVariants), new Date()]
+      [stopId, JSON.stringify(stopVariants), new Date().toISOString()]
     );
   } else {
     // TODO: Update if VARIANTS_CODES_UPDATED_AT > 10 days
@@ -86,7 +89,9 @@ export const getOrUpdateStopVariants = async (stopId: number) => {
 };
 
 export const getFavorites = async () => {
-  const { rows: { _array } } = await db.executeSql(
+  const {
+    rows: { _array }
+  } = await db.executeSql(
     "select COD_UBIC_P, DESC_LINEA, VARIANTS_CODES, VARIANTS_DESCRIPTIONS, LAT, LONG from FAVORITES join BUS_STOP on ID = COD_UBIC_P;"
   );
 

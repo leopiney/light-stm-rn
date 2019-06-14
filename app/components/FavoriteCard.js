@@ -1,18 +1,16 @@
-// @flow
-import React from "react";
-
-import { StyleSheet, Text, View } from "react-native";
-
-import { getFavoriteNextETAs, removeFavorite } from "../api/lightSTM";
-import Colors from "../utils/colors";
-import Settings from "../utils/settings";
 import type { BusETA, FavoriteBusStop, LineVariants } from "../utils/types";
+import { StyleSheet, Text, View } from "react-native";
+import { getFavoriteNextETAs, removeFavorite } from "../api/lightSTM";
 
+import Colors from "../utils/colors";
 import FavoriteCardMenu from "./FavoriteCardMenu";
 import LineEta from "./LineETA";
 import Loading from "./Loading";
 import MapMarker from "./MapMarker";
 import MapView from "./MapView";
+// @flow
+import React from "react";
+import Settings from "../utils/settings";
 
 type props = {
   linesVariants: LineVariants[],
@@ -89,6 +87,28 @@ export default class FavoriteCard extends React.Component<props, state> {
     if (this.timeout) clearTimeout(this.timeout);
   }
 
+  fitMap = (buses?: Object[]) => {
+    if (!buses) {
+      buses = this.state.buses;
+    }
+
+    const coordinates = buses.map(bus => bus.coordinates);
+    const { stop } = this.props;
+    coordinates.push({ latitude: stop.LAT, longitude: stop.LONG });
+
+    if (this.map) {
+      this.map.fitToCoordinates(coordinates, {
+        edgePadding: {
+          top: 20,
+          bottom: 20,
+          left: 20,
+          right: 20
+        },
+        animated: true
+      });
+    }
+  };
+
   updateETAs = () => {
     const { stop, linesVariants } = this.props;
 
@@ -106,24 +126,7 @@ export default class FavoriteCard extends React.Component<props, state> {
         console.log(`Setting ETAs: ${JSON.stringify(etas)}`);
         this.setState({ buses: nextETAs, etas, loading: false });
 
-        if (nextETAs.length > 0)
-          setTimeout(() => {
-            const coordinates = nextETAs.map(bus => bus.coordinates);
-            const { stop } = this.props;
-            coordinates.push({ latitude: stop.LAT, longitude: stop.LONG });
-
-            if (this.map) {
-              this.map.fitToCoordinates(coordinates, {
-                edgePadding: {
-                  top: 20,
-                  bottom: 20,
-                  left: 20,
-                  right: 20
-                },
-                animated: true
-              });
-            }
-          });
+        if (nextETAs.length > 0) setTimeout(() => this.fitMap(nextETAs));
 
         if (Settings.ETA_UPDATE_ENABLE) {
           this.timeout = setTimeout(() => {
@@ -164,6 +167,7 @@ export default class FavoriteCard extends React.Component<props, state> {
               title: `Detail for stop ${this.props.stop.COD_UBIC_P}`
             })
           }
+          onMapReady={this.fitMap}
           type="static"
         >
           <MapMarker
@@ -196,10 +200,9 @@ export default class FavoriteCard extends React.Component<props, state> {
               />
             ))}
 
-          {!this.state.loading &&
-            this.state.error.length > 0 && (
-              <Text style={styles.error}>{this.state.error}</Text>
-            )}
+          {!this.state.loading && this.state.error.length > 0 && (
+            <Text style={styles.error}>{this.state.error}</Text>
+          )}
         </View>
 
         <FavoriteCardMenu

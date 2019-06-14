@@ -5,7 +5,7 @@ console.log("Defining Migrations module");
 
 export const runMigrations = async () => {
   await db.executeSql(
-    "create table if not exists BUS_STOP_VARIANTS (COD_UBIC_P integer primary key, VARIANTS_JSON text not null, VARIANTS_CODES_UPDATED_AT datetime null);"
+    "create table if not exists BUS_STOP_VARIANTS (COD_UBIC_P integer primary key, VARIANTS_JSON text not null, VARIANTS_CODES_UPDATED_AT text null);"
   );
   console.log("Created BUS_STOP_VARIANTS table successfully");
   await db.executeSql(
