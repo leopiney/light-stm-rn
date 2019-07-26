@@ -1,9 +1,22 @@
 {
   "expo": {
-    "name": "LightSTM",
+    "name": "lightstm",
+    "slug": "LightSTM",
+    "privacy": "public",
+    "sdkVersion": "33.0.0",
+    "platforms": ["ios", "android", "web"],
+    "version": "0.0.2",
+    "orientation": "portrait",
     "icon": "./icon.png",
-    "version": "0.0.1",
-    "sdkVersion": "25.0.0",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
     "android": {
       "package": "com.leopiney.lightstm",
       "config": {

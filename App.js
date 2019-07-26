@@ -1,5 +1,5 @@
 import React from "react";
-import { StackNavigator } from "react-navigation";
+import { createAppContainer, createStackNavigator } from "react-navigation";
 import { MenuProvider } from "react-native-popup-menu";
 
 import Dashboard from "./app/containers/Dashboard";
@@ -14,7 +14,7 @@ import Colors from "./app/utils/colors";
 
 setUpDatabase();
 
-const App = StackNavigator({
+const AppNavigator = createStackNavigator({
   Splash: { screen: Splash, navigationOptions: { header: null } },
   Dashboard: {
     screen: Dashboard,
@@ -33,6 +33,8 @@ const App = StackNavigator({
   SelectLine: { screen: SelectLine, navigationOptions: { header: null } },
   StopDetail: { screen: StopDetail }
 });
+
+const App = createAppContainer(AppNavigator);
 
 export default () => (
   <MenuProvider>

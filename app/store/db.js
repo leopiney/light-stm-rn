@@ -1,7 +1,8 @@
 // @flow
-import { Asset, FileSystem, SQLite } from "expo";
+import * as FileSystem from "expo-file-system";
 
-const dbAsset = Asset.fromModule(require("../../assets/stm.db"));
+import { Asset } from "expo-asset";
+import { SQLite } from "expo-sqlite";
 
 const dbPath = `${FileSystem.documentDirectory}SQLite/stm.db`;
 
@@ -14,6 +15,7 @@ type connection = {
     ) => void
   }
 };
+
 const conn: connection = {};
 
 const makeSQLiteDirAsync = async () => {
@@ -37,6 +39,7 @@ export const setUpDatabase = async () => {
   const { exists } = await FileSystem.getInfoAsync(dbPath);
   console.log(`Database exists in ${dbPath}: ${exists}`);
   if (!exists) {
+    const dbAsset = Asset.fromModule(require("../../assets/stm.db"));
     await FileSystem.downloadAsync(dbAsset.uri, dbPath);
   }
 
@@ -68,13 +71,19 @@ export default {
         `Running query on database ${query} : ${JSON.stringify(args)}`
       );
       if (conn.db) {
-        conn.db.transaction(tx =>
-          tx.executeSql(
-            query,
-            args || [],
-            (_, res) => resolve(res),
-            (_, error) => reject(error)
-          )
+        console.log("Running query on DB");
+        conn.db.transaction(
+          tx => {
+            console.log("Running inside transaction");
+            return tx.executeSql(
+              query,
+              args || [],
+              (_, res) => resolve(res),
+              (_, error) => reject(error)
+            );
+          },
+          error => console.error(`Transaction finished with error: ${error}`),
+          msg => console.log(`Transaction finished: ${msg}`)
         );
       }
     });
