@@ -30,6 +30,8 @@
     },
     "packagerOpts": {
       "assetExts": ["db"]
-    }
+    },
+    "description": "A React Native implementation of an intuitive public transport application in Montevideo city.",
+    "githubUrl": "https://github.com/leopiney/light-stm-rn"
   }
 }
